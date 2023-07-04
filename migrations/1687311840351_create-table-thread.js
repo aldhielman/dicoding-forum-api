@@ -11,7 +11,6 @@ exports.up = (pgm) => {
     title: {
       type: 'VARCHAR(50)',
       notNull: true,
-      unique: true,
     },
     body: {
       type: 'TEXT',
