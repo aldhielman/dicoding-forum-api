@@ -30,8 +30,14 @@ describe('HTTP server', () => {
       url: `/threads/${threadId}/comments/${commentId}`,
     });
 
+    const postReplyResponse = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments/${commentId}/replies`,
+    });
+
     expect(postCommentResponse.statusCode).toEqual(401);
     expect(deleteCommentResponse.statusCode).toEqual(401);
+    expect(postReplyResponse.statusCode).toEqual(401);
   });
 
   it('should response 401 when request protected route with invalid token', async () => {
@@ -55,8 +61,17 @@ describe('HTTP server', () => {
       },
     });
 
+    const postReplyResponse = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments/${commentId}/replies`,
+      headers: {
+        authorizations: 'invalidtoken',
+      },
+    });
+
     expect(postCommentResponse.statusCode).toEqual(401);
     expect(deleteCommentResponse.statusCode).toEqual(401);
+    expect(postReplyResponse.statusCode).toEqual(401);
   });
 
   it('should handle server error correctly', async () => {

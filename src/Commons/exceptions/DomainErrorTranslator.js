@@ -66,6 +66,14 @@ DomainErrorTranslator._directories = {
   'DETAIL_THREAD.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
     'tipe data tidak sesuai'
   ),
+
+  'ADD_REPLY_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada'
+  ),
+  'ADD_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION':
+    new InvariantError(
+      'tidak dapat membuat reply baru karena tipe data tidak sesuai'
+    ),
 };
 
 module.exports = DomainErrorTranslator;

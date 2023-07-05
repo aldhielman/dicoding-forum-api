@@ -22,5 +22,9 @@ describe('CommentRepository interface', () => {
     await expect(
       commentRepository.getCommentsByThreadId('')
     ).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+
+    await expect(commentRepository.verifyCommentId('')).rejects.toThrowError(
+      'COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
   });
 });

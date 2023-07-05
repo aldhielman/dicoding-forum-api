@@ -44,6 +44,16 @@ class CommentRepositoryPostgres extends CommentRepository {
   async verifyOwner(payload) {
     const { userId, commentId } = payload;
 
+    const result = await this.verifyCommentId(commentId);
+
+    if (result.user_id !== userId) {
+      throw new AuthorizationError(
+        'anda tidak dapat menghapus komentar yang tidak anda buat'
+      );
+    }
+  }
+
+  async verifyCommentId(commentId) {
     const query = {
       text: 'SELECT * FROM comments WHERE id = $1',
       values: [commentId],
@@ -55,11 +65,7 @@ class CommentRepositoryPostgres extends CommentRepository {
       throw new NotFoundError('comment tidak ditemukan');
     }
 
-    if (result.rows[0].user_id !== userId) {
-      throw new AuthorizationError(
-        'anda tidak dapat menghapus komentar yang tidak anda buat'
-      );
-    }
+    return result.rows[0];
   }
 
   async getCommentsByThreadId(threadId) {

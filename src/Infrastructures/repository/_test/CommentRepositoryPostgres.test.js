@@ -329,4 +329,40 @@ describe('CommentRepositoryPostgres', () => {
       expect(result[1].content).toEqual('comment lebih baru');
     });
   });
+
+  describe('verifyCommentId function', () => {
+    it('should triger NotFound Exception when given commentId not found', async () => {
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+
+      const commentId = 'notfound';
+
+      await expect(
+        commentRepositoryPostgres.verifyCommentId(commentId)
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not triger NotFound Exception when given commentId found', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        user_id: 'user-test',
+      });
+      await CommentTableTestHelper.addComment({
+        id: 'comment-123',
+        user_id: 'user-test',
+        thread_id: 'thread-test',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+
+      const commentId = 'comment-123';
+
+      await expect(
+        commentRepositoryPostgres.verifyCommentId(commentId)
+      ).resolves.not.toThrowError(NotFoundError);
+    });
+  });
 });

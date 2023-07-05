@@ -6,7 +6,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 
-describe('/threads/{threadId}/comment endpoint', () => {
+describe('/threads/{threadId}/comments endpoint', () => {
   let token;
   let user;
   let threadId = 'thread-123';
