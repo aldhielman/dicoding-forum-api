@@ -55,6 +55,7 @@ describe('a DetailThread entities', () => {
           content: 'Comment 1',
           username: 'dicoding',
           date: new Date().toISOString(),
+          replies: [],
         }),
       ],
     };

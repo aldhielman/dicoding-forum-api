@@ -5,10 +5,11 @@ const Comment = require('../../Domains/comments/entities/Comment');
 const DetailComment = require('../../Domains/comments/entities/DetailComment');
 
 class CommentRepositoryPostgres extends CommentRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, replyRepository) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._replyRepository = replyRepository;
   }
 
   async addComment(payload) {
@@ -75,20 +76,22 @@ class CommentRepositoryPostgres extends CommentRepository {
     };
 
     const result = await this._pool.query(query);
-    let comments = [];
+    const comments = [];
 
     if (result.rowCount) {
-      const comment = result.rows.map(
-        ({ id, username, created_at, content, is_deleted }) => {
-          return new DetailComment({
-            id,
-            content: is_deleted ? '**komentar telah dihapus**' : content,
-            date: created_at,
-            username,
-          });
-        }
-      );
-      comments.push(...comment);
+      for (const item of result.rows) {
+        const { id, created_at, is_deleted, content } = item;
+        const replies = await this._replyRepository.getRepliesByCommentId(
+          item.id
+        );
+        const comment = new DetailComment({
+          ...item,
+          date: created_at,
+          content: is_deleted ? '**komentar telah dihapus**' : content,
+          replies,
+        });
+        comments.push(comment);
+      }
     }
 
     return comments;

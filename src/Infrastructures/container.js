@@ -83,6 +83,10 @@ container.register([
         {
           concrete: nanoid,
         },
+        {
+          name: 'replyRepository',
+          internal: ReplyRepository.name,
+        },
       ],
     },
   },

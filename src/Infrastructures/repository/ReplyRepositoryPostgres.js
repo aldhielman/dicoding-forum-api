@@ -4,6 +4,7 @@ const Comment = require('../../Domains/comments/entities/Comment');
 const DetailComment = require('../../Domains/comments/entities/DetailComment');
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 const Reply = require('../../Domains/replies/entities/Reply');
+const DetailReply = require('../../Domains/replies/entities/DetailReply');
 
 class ReplyRepositoryPostgres extends ReplyRepository {
   constructor(pool, idGenerator) {
@@ -63,31 +64,31 @@ class ReplyRepositoryPostgres extends ReplyRepository {
   //   }
   // }
 
-  // async getCommentsByThreadId(threadId) {
-  //   const query = {
-  //     text: 'SELECT c.id, u.username, c.created_at, c.content, c.is_deleted FROM comments c LEFT JOIN users u ON c.user_id = u.id WHERE thread_id = $1 ORDER BY c.created_at ASC',
-  //     values: [threadId],
-  //   };
+  async getRepliesByCommentId(commentId) {
+    const query = {
+      text: 'SELECT r.id, u.username, r.created_at, r.content, r.is_deleted FROM replies r LEFT JOIN users u ON r.user_id = u.id WHERE comment_id = $1 ORDER BY r.created_at ASC',
+      values: [commentId],
+    };
 
-  //   const result = await this._pool.query(query);
-  //   let comments = [];
+    const result = await this._pool.query(query);
+    let replies = [];
 
-  //   if (result.rowCount) {
-  //     const comment = result.rows.map(
-  //       ({ id, username, created_at, content, is_deleted }) => {
-  //         return new DetailComment({
-  //           id,
-  //           content: is_deleted ? '**komentar telah dihapus**' : content,
-  //           date: created_at,
-  //           username,
-  //         });
-  //       }
-  //     );
-  //     comments.push(...comment);
-  //   }
+    if (result.rowCount) {
+      const reply = result.rows.map(
+        ({ id, username, created_at, content, is_deleted }) => {
+          return new DetailReply({
+            id,
+            content: is_deleted ? '**balasan telah dihapus**' : content,
+            date: created_at,
+            username,
+          });
+        }
+      );
+      replies.push(...reply);
+    }
 
-  //   return comments;
-  // }
+    return replies;
+  }
 }
 
 module.exports = ReplyRepositoryPostgres;

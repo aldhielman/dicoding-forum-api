@@ -26,6 +26,11 @@ exports.up = (pgm) => {
       notNull: true,
       references: '"users"',
     },
+    is_deleted: {
+      type: 'BOOLEAN',
+      notNull: true,
+      default: false,
+    },
   });
 
   pgm.createIndex('replies', 'user_id');

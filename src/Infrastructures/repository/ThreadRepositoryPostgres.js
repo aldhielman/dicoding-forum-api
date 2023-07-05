@@ -46,7 +46,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
     return result.rows.map(
       async ({ id, title, body, created_at, username }) => {
-        // let comments = this._commentRepository.getComment
         let comments = await this._commentRepository.getCommentsByThreadId(id);
         return new DetailThread({
           id,

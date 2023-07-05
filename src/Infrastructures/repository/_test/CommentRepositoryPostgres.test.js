@@ -10,9 +10,13 @@ const Comment = require('../../../Domains/comments/entities/Comment');
 const { verify } = require('@hapi/jwt/lib/crypto');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const DetailComment = require('../../../Domains/comments/entities/DetailComment');
+const DetailReply = require('../../../Domains/replies/entities/DetailReply');
+const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
+    await RepliesTableTestHelper.cleanTable();
     await CommentTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
@@ -208,7 +212,12 @@ describe('CommentRepositoryPostgres', () => {
         user_id: 'user-test',
       });
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        {},
+        replyRepositoryPostgres
+      );
 
       result = await commentRepositoryPostgres.getCommentsByThreadId(
         'thread-test'
@@ -234,11 +243,18 @@ describe('CommentRepositoryPostgres', () => {
         thread_id: 'thread-test',
       });
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        {},
+        replyRepositoryPostgres
+      );
 
       result = await commentRepositoryPostgres.getCommentsByThreadId(
         'thread-test'
       );
+
+      console.log(result);
 
       expect(result).toHaveLength(1);
       result.forEach((item) => {
@@ -274,7 +290,12 @@ describe('CommentRepositoryPostgres', () => {
         created_at: new Date(new Date().getTime() - 3600000).toISOString(),
       });
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        {},
+        replyRepositoryPostgres
+      );
 
       result = await commentRepositoryPostgres.getCommentsByThreadId(
         'thread-test'
@@ -304,9 +325,10 @@ describe('CommentRepositoryPostgres', () => {
         thread_id: 'thread-test',
         content: 'comment lebih baru',
         created_at: new Date().toISOString(),
+        replies: [],
       });
 
-      // Comment 1
+      // Comment 2
       await CommentTableTestHelper.addComment({
         id: 'comment-2',
         user_id: 'user-test',
@@ -316,7 +338,30 @@ describe('CommentRepositoryPostgres', () => {
         created_at: new Date(new Date().getTime() - 3600000).toISOString(),
       });
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        content: 'Reply 1',
+        userId: 'user-test',
+        comment_id: 'comment-2',
+        is_deleted: false,
+        created_at: new Date().toISOString(),
+      });
+
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-456',
+        content: 'Reply 1',
+        userId: 'user-test',
+        comment_id: 'comment-2',
+        is_deleted: true,
+        created_at: new Date(new Date().getTime() - 3600000).toISOString(),
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(
+        pool,
+        {},
+        replyRepositoryPostgres
+      );
 
       result = await commentRepositoryPostgres.getCommentsByThreadId(
         'thread-test'
@@ -325,8 +370,13 @@ describe('CommentRepositoryPostgres', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toEqual('comment-2');
       expect(result[0].content).toEqual('**komentar telah dihapus**');
+      expect(result[0].replies).toHaveLength(2);
+      expect(result[0].replies[0].id).toEqual('reply-456');
+      expect(result[0].replies[1].id).toEqual('reply-123');
+
       expect(result[1].id).toEqual('comment-1');
       expect(result[1].content).toEqual('comment lebih baru');
+      expect(result[1].replies).toEqual([]);
     });
   });
 

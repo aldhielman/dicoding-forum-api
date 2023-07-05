@@ -1,3 +1,4 @@
+const DetailReply = require('../../../replies/entities/DetailReply');
 const DetailComment = require('../DetailComment');
 
 describe('a DetailComment entities', () => {
@@ -28,6 +29,7 @@ describe('a DetailComment entities', () => {
       content: 'comment 1',
       username: {},
       date: [],
+      replies: {},
     };
 
     // Action and Assert
@@ -43,6 +45,14 @@ describe('a DetailComment entities', () => {
       username: 'dicoding',
       date: new Date().toISOString(),
       content: 'Comment 1',
+      replies: [
+        new DetailReply({
+          id: 'reply-123',
+          content: 'Reply 1',
+          username: 'dicoding',
+          date: new Date().toISOString(),
+        }),
+      ],
     };
 
     // Action
@@ -53,5 +63,6 @@ describe('a DetailComment entities', () => {
     expect(comment.username).toEqual(payload.username);
     expect(comment.date).toEqual(payload.date);
     expect(comment.content).toEqual(payload.content);
+    expect(comment.replies).toEqual(payload.replies);
   });
 });
