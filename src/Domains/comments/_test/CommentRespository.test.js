@@ -15,8 +15,12 @@ describe('CommentRepository interface', () => {
       'COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
 
-    await expect(commentRepository.verifyOwner('')).rejects.toThrowError(
+    await expect(commentRepository.verifyOwner({})).rejects.toThrowError(
       'COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
+
+    await expect(
+      commentRepository.getCommentsByThreadId('')
+    ).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

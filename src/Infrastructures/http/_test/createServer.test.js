@@ -15,6 +15,50 @@ describe('HTTP server', () => {
     expect(response.statusCode).toEqual(404);
   });
 
+  it('should response 401 when request protected route without token', async () => {
+    const threadId = 'thread-123';
+    const commentId = 'comment-123';
+    const server = await createServer({});
+
+    const postCommentResponse = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments`,
+    });
+
+    const deleteCommentResponse = await server.inject({
+      method: 'DELETE',
+      url: `/threads/${threadId}/comments/${commentId}`,
+    });
+
+    expect(postCommentResponse.statusCode).toEqual(401);
+    expect(deleteCommentResponse.statusCode).toEqual(401);
+  });
+
+  it('should response 401 when request protected route with invalid token', async () => {
+    const threadId = 'thread-123';
+    const commentId = 'comment-123';
+    const server = await createServer({});
+
+    const postCommentResponse = await server.inject({
+      method: 'POST',
+      url: `/threads/${threadId}/comments`,
+      headers: {
+        authorizations: 'invalidtoken',
+      },
+    });
+
+    const deleteCommentResponse = await server.inject({
+      method: 'DELETE',
+      url: `/threads/${threadId}/comments/${commentId}`,
+      headers: {
+        authorizations: 'invalidtoken',
+      },
+    });
+
+    expect(postCommentResponse.statusCode).toEqual(401);
+    expect(deleteCommentResponse.statusCode).toEqual(401);
+  });
+
   it('should handle server error correctly', async () => {
     // Arrange
     const requestPayload = {

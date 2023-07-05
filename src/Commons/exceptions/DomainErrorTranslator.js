@@ -59,6 +59,13 @@ DomainErrorTranslator._directories = {
     new InvariantError(
       'tidak dapat menghapus comment karena tipe data tidak sesuai'
     ),
+
+  'DETAIL_THREAD.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'properti yang dibutuhkan tidak ada'
+  ),
+  'DETAIL_THREAD.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
+    'tipe data tidak sesuai'
+  ),
 };
 
 module.exports = DomainErrorTranslator;

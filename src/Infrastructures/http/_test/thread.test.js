@@ -3,13 +3,14 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const container = require('../../container');
 const createServer = require('../createServer');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 
 describe('/threads endpoint', () => {
   let user;
   let token;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const requestPayload = {
       username: 'dicoding',
       password: 'secret',
@@ -50,7 +51,10 @@ describe('/threads endpoint', () => {
   });
 
   afterEach(async () => {
+    await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
+    await AuthenticationsTableTestHelper.cleanTable();
   });
 
   describe('when POST /threads', () => {
@@ -173,6 +177,65 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.addedThread.id).toBeDefined();
       expect(responseJson.data.addedThread.title).toEqual('Title 1');
       expect(responseJson.data.addedThread.owner).toEqual(user.id);
+    });
+  });
+
+  describe('when GET /threads/{threadId}', () => {
+    it('should response 404 when threadId not found', async () => {
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/notFoundId',
+      });
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
+
+    it('should response 200 and return correct payload', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-1', username: 'user1' });
+      await UsersTableTestHelper.addUser({ id: 'user-2', username: 'user2' });
+
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        user_id: 'user-1',
+        created_at: '2023-07-04T05:19:09.775Z',
+      });
+
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        thread_id: 'thread-123',
+        user_id: 'user-1',
+        created_at: '2023-07-04T09:19:09.775Z',
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-456',
+        thread_id: 'thread-123',
+        user_id: 'user-2',
+        created_at: '2023-07-04T08:19:09.775Z',
+      });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.id).toEqual('thread-123');
+      expect(responseJson.data.thread.title).toEqual('title test');
+      expect(responseJson.data.thread.body).toEqual('body test');
+      expect(responseJson.data.thread.date).toEqual('2023-07-04T05:19:09.775Z');
+      expect(responseJson.data.thread.comments).toHaveLength(2);
+
+      expect(responseJson.data.thread.comments[0].id).toEqual('comment-456');
+      expect(responseJson.data.thread.comments[1].id).toEqual('comment-123');
     });
   });
 });

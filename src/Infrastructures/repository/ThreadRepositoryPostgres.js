@@ -1,12 +1,14 @@
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
+const DetailThread = require('../../Domains/threads/entities/DetailThread');
 const Thread = require('../../Domains/threads/entities/Thread');
 
 class ThreadRepositoryPostgres extends ThreadRepository {
-  constructor(pool, idGenerator) {
+  constructor(pool, idGenerator, commentRepopsitory) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
+    this._commentRepository = commentRepopsitory;
   }
 
   async addThread(payload) {
@@ -32,7 +34,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async viewThread(id) {
     const query = {
-      text: 'SELECT * from threads WHERE ID = $1',
+      text: 'SELECT t.id, t.title, t.body, t.created_at, u.username FROM threads t LEFT JOIN users u ON t.user_id = u.id WHERE t.id = $1',
       values: [id],
     };
 
@@ -42,7 +44,20 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       throw new NotFoundError('thread tidak ditemukan');
     }
 
-    return result.rows[0];
+    return result.rows.map(
+      async ({ id, title, body, created_at, username }) => {
+        // let comments = this._commentRepository.getComment
+        let comments = await this._commentRepository.getCommentsByThreadId(id);
+        return new DetailThread({
+          id,
+          title,
+          body,
+          date: created_at,
+          username,
+          comments,
+        });
+      }
+    )[0];
   }
 }
 

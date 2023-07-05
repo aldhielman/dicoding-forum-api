@@ -42,11 +42,11 @@ describe('a Comment entities', () => {
     };
 
     // Action
-    const thread = new Comment(payload);
+    const comment = new Comment(payload);
 
     // Assert
-    expect(thread.id).toEqual(payload.id);
-    expect(thread.content).toEqual(payload.content);
-    expect(thread.owner).toEqual(payload.owner);
+    expect(comment.id).toEqual(payload.id);
+    expect(comment.content).toEqual(payload.content);
+    expect(comment.owner).toEqual(payload.owner);
   });
 });

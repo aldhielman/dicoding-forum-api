@@ -30,6 +30,7 @@ const CommentRepository = require('../Domains/comments/CommentRepository');
 const AddThreadUseCase = require('../Applications/use_case/AddThreadUseCase');
 const AddCommentUseCase = require('../Applications/use_case/AddCommentUseCase');
 const DeleteCommentUseCase = require('../Applications/use_case/DeleteCommentUseCase');
+const ViewThreadUseCase = require('../Applications/use_case/ViewThreadUseCase');
 
 // creating container
 const container = createContainer();
@@ -60,6 +61,10 @@ container.register([
         },
         {
           concrete: nanoid,
+        },
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
         },
       ],
     },
@@ -190,6 +195,19 @@ container.register([
   {
     key: AddThreadUseCase.name,
     Class: AddThreadUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'threadRepository',
+          internal: ThreadRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: ViewThreadUseCase.name,
+    Class: ViewThreadUseCase,
     parameter: {
       injectType: 'destructuring',
       dependencies: [
