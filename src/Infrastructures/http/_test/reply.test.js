@@ -111,13 +111,13 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     it('should response 400 when request payload not contain needed property', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        thread_id: threadId,
-        user_id: user.id,
+        threadId,
+        userId: user.id,
       });
 
       // Arrange
@@ -148,13 +148,13 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     it('should response 400 when request payload not meet specification', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        thread_id: threadId,
-        user_id: user.id,
+        threadId,
+        userId: user.id,
       });
 
       // Arrange
@@ -185,13 +185,13 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     it('should response 201 and persisted reply', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        thread_id: threadId,
-        user_id: user.id,
+        threadId,
+        userId: user.id,
       });
 
       const requestPayload = {
@@ -241,7 +241,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     it('should response 404 when commentId is invalid', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       const server = await createServer(container);
@@ -265,13 +265,13 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     it('should response 404 when comment with given commentId found but replytId not found', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        thread_id: threadId,
-        user_id: user.id,
+        threadId,
+        userId: user.id,
       });
 
       const server = await createServer(container);
@@ -299,16 +299,16 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        user_id: 'user-other',
+        userId: 'user-other',
       });
 
       await RepliesTableTestHelper.addReply({
         id: replyId,
-        user_id: 'user-other',
+        userId: 'user-other',
       });
 
       const server = await createServer(container);
@@ -339,19 +339,19 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
 
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: 'user-other',
+        userId: 'user-other',
       });
 
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        thread_id: threadId,
-        user_id: user.id,
+        threadId,
+        userId: user.id,
       });
 
       await RepliesTableTestHelper.addReply({
         id: replyId,
         comment_id: commentId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       const server = await createServer(container);

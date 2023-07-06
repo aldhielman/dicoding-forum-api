@@ -104,7 +104,7 @@ describe('ThreadRepositoryPostgres', () => {
       await ThreadsTableTestHelper.addThread({
         id: 'thread-123',
         userId: 'user-123',
-        created_at: date,
+        createdAt: date,
       });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);

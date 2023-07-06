@@ -141,7 +141,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
     it('should response 201 and persisted comment', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       const requestPayload = {
@@ -191,7 +191,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
     it('should response 404 when comment with given threadId found but commentId not found', async () => {
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       const server = await createServer(container);
@@ -219,11 +219,11 @@ describe('/threads/{threadId}/comments endpoint', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
       await CommentsTableTestHelper.addComment({
         id: commentId,
-        user_id: 'user-other',
+        userId: 'user-other',
       });
 
       const server = await createServer(container);
@@ -254,13 +254,13 @@ describe('/threads/{threadId}/comments endpoint', () => {
 
       await ThreadsTableTestHelper.addThread({
         id: threadId,
-        user_id: 'user-other',
+        userId: 'user-other',
       });
 
       await CommentsTableTestHelper.addComment({
         id: commentId,
         thread_id: threadId,
-        user_id: user.id,
+        userId: user.id,
       });
 
       const server = await createServer(container);

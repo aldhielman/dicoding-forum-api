@@ -6,12 +6,12 @@ const ThreadsTableTestHelper = {
     id = 'thread-123',
     title = 'title test',
     body = 'body test',
-    user_id = 'user-123',
-    created_at = new Date().toISOString(),
+    userId = 'user-123',
+    createdAt = new Date().toISOString(),
   }) {
     const query = {
       text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5)',
-      values: [id, title, body, user_id, created_at],
+      values: [id, title, body, userId, createdAt],
     };
 
     await pool.query(query);

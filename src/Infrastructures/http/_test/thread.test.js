@@ -200,21 +200,21 @@ describe('/threads endpoint', () => {
 
       await ThreadsTableTestHelper.addThread({
         id: 'thread-123',
-        user_id: 'user-1',
-        created_at: '2023-07-04T05:19:09.775Z',
+        userId: 'user-1',
+        createdAt: '2023-07-04T05:19:09.775Z',
       });
 
       await CommentsTableTestHelper.addComment({
         id: 'comment-123',
         thread_id: 'thread-123',
-        user_id: 'user-1',
-        created_at: '2023-07-04T09:19:09.775Z',
+        userId: 'user-1',
+        createdAt: '2023-07-04T09:19:09.775Z',
       });
       await CommentsTableTestHelper.addComment({
         id: 'comment-456',
         thread_id: 'thread-123',
-        user_id: 'user-2',
-        created_at: '2023-07-04T08:19:09.775Z',
+        userId: 'user-2',
+        createdAt: '2023-07-04T08:19:09.775Z',
       });
 
       const server = await createServer(container);

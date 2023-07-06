@@ -1,18 +1,18 @@
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const pool = require('../../database/postgres/pool');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
-const CommentTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const Reply = require('../../../Domains/replies/entities/Reply');
-const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const DetailReply = require('../../../Domains/replies/entities/DetailReply');
 
 describe('ReplyRepositoryPostgres', () => {
   afterEach(async () => {
     await RepliesTableTestHelper.cleanTable();
-    await CommentTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
   });
@@ -27,7 +27,7 @@ describe('ReplyRepositoryPostgres', () => {
       id: 'thread-123',
       user_id: 'user-123',
     });
-    await CommentTableTestHelper.addComment({
+    await CommentsTableTestHelper.addComment({
       id: 'comment-123',
       thread_id: 'thread-123',
       user_id: 'user-123',
@@ -198,116 +198,130 @@ describe('ReplyRepositoryPostgres', () => {
       expect(result).toEqual([]);
     });
 
-    // it('should return array of DetailComment when there are thread on comment', async () => {
-    //   await UsersTableTestHelper.addUser({
-    //     id: 'user-test',
-    //     username: 'dicodingother',
-    //   });
-    //   await ThreadsTableTestHelper.addThread({
-    //     id: 'thread-test',
-    //     userId: 'user-test',
-    //   });
+    it('should return array of DetailReply when there are replies on comment', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        userId: 'user-test',
+      });
 
-    //   // Comment 1
-    //   await CommentTableTestHelper.addComment({
-    //     id: 'comment-123',
-    //     userId: 'user-test',
-    //     commentId: 'thread-test',
-    //   });
+      // Comment 1
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
+      });
 
-    //   const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-test',
+        commentId: 'comment-test',
+        userId: 'user-test',
+      });
 
-    //   const result = await commentRepositoryPostgres.getCommentsByThreadId(
-    //     'thread-test'
-    //   );
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-    //   expect(result).toHaveLength(1);
-    //   result.forEach((item) => {
-    //     expect(item).toBeInstanceOf(DetailComment);
-    //   });
-    // });
+      const result = await replyRepositoryPostgres.getRepliesByCommentId(
+        'comment-test',
+      );
 
-    // it('should return an array of DetailComment object ordered by created_at ASC', async () => {
-    //   await UsersTableTestHelper.addUser({
-    //     id: 'user-test',
-    //     username: 'dicodingother',
-    //   });
-    //   await ThreadsTableTestHelper.addThread({
-    //     id: 'thread-test',
-    //     userId: 'user-test',
-    //   });
+      expect(result).toHaveLength(1);
+      result.forEach((item) => {
+        expect(item).toBeInstanceOf(DetailReply);
+      });
+    });
 
-    //   // Comment 1
-    //   await CommentTableTestHelper.addComment({
-    //     id: 'comment-1',
-    //     userId: 'user-test',
-    //     commentId: 'thread-test',
-    //     content: 'comment lebih baru',
-    //     created_at: new Date().toISOString(),
-    //   });
+    it('should return an array of DetailReply object ordered by created_at ASC', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        userId: 'user-test',
+      });
 
-    //   // Comment 1
-    //   await CommentTableTestHelper.addComment({
-    //     id: 'comment-2',
-    //     userId: 'user-test',
-    //     commentId: 'thread-test',
-    //     content: 'comment lebih lama',
-    //     created_at: new Date(new Date().getTime() - 3600000).toISOString(),
-    //   });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-test',
+        userId: 'user-test',
+        commentId: 'thread-test',
+        content: 'comment lebih baru',
+        createdAt: new Date().toISOString(),
+      });
 
-    //   const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        commentId: 'comment-test',
+        createdAt: new Date().toISOString(),
+      });
 
-    //   const result = await commentRepositoryPostgres.getCommentsByThreadId(
-    //     'thread-test'
-    //   );
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-456',
+        commentId: 'comment-test',
+        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+      });
 
-    //   expect(result).toHaveLength(2);
-    //   expect(result[0].id).toEqual('comment-2');
-    //   expect(result[0].content).toEqual('comment lebih lama');
-    //   expect(result[1].id).toEqual('comment-1');
-    //   expect(result[1].content).toEqual('comment lebih baru');
-    // });
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-    // it('should return correct content when comment is deleted', async () => {
-    //   await UsersTableTestHelper.addUser({
-    //     id: 'user-test',
-    //     username: 'dicodingother',
-    //   });
-    //   await ThreadsTableTestHelper.addThread({
-    //     id: 'thread-test',
-    //     userId: 'user-test',
-    //   });
+      const result = await replyRepositoryPostgres.getRepliesByCommentId(
+        'comment-test',
+      );
 
-    //   // Comment 1
-    //   await CommentTableTestHelper.addComment({
-    //     id: 'comment-1',
-    //     userId: 'user-test',
-    //     commentId: 'thread-test',
-    //     content: 'comment lebih baru',
-    //     created_at: new Date().toISOString(),
-    //   });
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toEqual('reply-456');
+    });
 
-    //   // Comment 1
-    //   await CommentTableTestHelper.addComment({
-    //     id: 'comment-2',
-    //     userId: 'user-test',
-    //     commentId: 'thread-test',
-    //     content: 'comment lebih lama',
-    //     is_deleted: true,
-    //     created_at: new Date(new Date().getTime() - 3600000).toISOString(),
-    //   });
+    it('should return correct content when reply is deleted', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        userId: 'user-test',
+      });
 
-    //   const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      // Comment 1
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-test',
+        userId: 'user-test',
+        threadtId: 'thread-test',
+        content: 'comment lebih baru',
+        createdAt: new Date().toISOString(),
+      });
 
-    //   const result = await commentRepositoryPostgres.getCommentsByThreadId(
-    //     'thread-test'
-    //   );
+      // Reply 1
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-1',
+        userId: 'user-test',
+        commentId: 'comment-test',
+        content: 'Reply 1',
+        isDeleted: false,
+      });
 
-    //   expect(result).toHaveLength(2);
-    //   expect(result[0].id).toEqual('comment-2');
-    //   expect(result[0].content).toEqual('**komentar telah dihapus**');
-    //   expect(result[1].id).toEqual('comment-1');
-    //   expect(result[1].content).toEqual('comment lebih baru');
-    // });
+      // Reply 2
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-2',
+        userId: 'user-test',
+        commentId: 'comment-test',
+        content: 'Reply 2',
+        isDeleted: true,
+        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+
+      const result = await replyRepositoryPostgres.getRepliesByCommentId(
+        'comment-test',
+      );
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toEqual('reply-2');
+      expect(result[0].content).toEqual('**balasan telah dihapus**');
+      expect(result[1].id).toEqual('reply-1');
+      expect(result[1].content).toEqual('Reply 1');
+    });
   });
 });

@@ -81,7 +81,7 @@ describe('CommentRepositoryPostgres', () => {
   });
 
   describe('deleteComment function', () => {
-    it('should update is_deleted to true on table comment', async () => {
+    it('should update isDeleted to true on table comment', async () => {
       const commentId = 'comment-123';
 
       await CommentTableTestHelper.addComment({ id: commentId });
@@ -97,7 +97,7 @@ describe('CommentRepositoryPostgres', () => {
       );
 
       expect(comments).toHaveLength(1);
-      expect(comments[0].is_deleted).toEqual(true);
+      expect(comments[0].isDeleted).toEqual(true);
     });
   });
 
@@ -122,12 +122,12 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
       await CommentTableTestHelper.addComment({
         id: 'comment-123',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
       });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
@@ -149,12 +149,12 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
       await CommentTableTestHelper.addComment({
         id: 'comment-123',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
       });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
@@ -176,12 +176,12 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
       await CommentTableTestHelper.addComment({
         id: 'comment-123',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
       });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
@@ -205,7 +205,7 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -229,14 +229,14 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
 
       // Comment 1
       await CommentTableTestHelper.addComment({
         id: 'comment-123',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -256,32 +256,32 @@ describe('CommentRepositoryPostgres', () => {
       });
     });
 
-    it('should return an array of DetailComment object ordered by created_at ASC', async () => {
+    it('should return an array of DetailComment object ordered by createdAt ASC', async () => {
       await UsersTableTestHelper.addUser({
         id: 'user-test',
         username: 'dicodingother',
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
 
       // Comment 1
       await CommentTableTestHelper.addComment({
         id: 'comment-1',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
         content: 'comment lebih baru',
-        created_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       });
 
       // Comment 1
       await CommentTableTestHelper.addComment({
         id: 'comment-2',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
         content: 'comment lebih lama',
-        created_at: new Date(new Date().getTime() - 3600000).toISOString(),
+        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -309,45 +309,45 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
 
       // Comment 1
       await CommentTableTestHelper.addComment({
         id: 'comment-1',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
         content: 'comment lebih baru',
-        created_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         replies: [],
       });
 
       // Comment 2
       await CommentTableTestHelper.addComment({
         id: 'comment-2',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
         content: 'comment lebih lama',
-        is_deleted: true,
-        created_at: new Date(new Date().getTime() - 3600000).toISOString(),
+        isDeleted: true,
+        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
       });
 
       await RepliesTableTestHelper.addReply({
         id: 'reply-123',
         content: 'Reply 1',
         userId: 'user-test',
-        comment_id: 'comment-2',
-        is_deleted: false,
-        created_at: new Date().toISOString(),
+        commentId: 'comment-2',
+        isDeleted: false,
+        createdAt: new Date().toISOString(),
       });
 
       await RepliesTableTestHelper.addReply({
         id: 'reply-456',
         content: 'Reply 1',
         userId: 'user-test',
-        comment_id: 'comment-2',
-        is_deleted: true,
-        created_at: new Date(new Date().getTime() - 3600000).toISOString(),
+        commentId: 'comment-2',
+        isDeleted: true,
+        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -392,12 +392,12 @@ describe('CommentRepositoryPostgres', () => {
       });
       await ThreadsTableTestHelper.addThread({
         id: 'thread-test',
-        user_id: 'user-test',
+        userId: 'user-test',
       });
       await CommentTableTestHelper.addComment({
         id: 'comment-123',
-        user_id: 'user-test',
-        thread_id: 'thread-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
       });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
