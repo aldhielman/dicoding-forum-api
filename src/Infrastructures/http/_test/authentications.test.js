@@ -101,7 +101,7 @@ describe('/authentications endpoint', () => {
       expect(response.statusCode).toEqual(401);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'kredensial yang Anda masukkan salah'
+        'kredensial yang Anda masukkan salah',
       );
     });
 
@@ -124,7 +124,7 @@ describe('/authentications endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'harus mengirimkan username dan password'
+        'harus mengirimkan username dan password',
       );
     });
 
@@ -148,7 +148,7 @@ describe('/authentications endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'username dan password harus string'
+        'username dan password harus string',
       );
     });
   });
@@ -272,7 +272,7 @@ describe('/authentications endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'refresh token tidak ditemukan di database'
+        'refresh token tidak ditemukan di database',
       );
     });
   });
@@ -318,7 +318,7 @@ describe('/authentications endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'refresh token tidak ditemukan di database'
+        'refresh token tidak ditemukan di database',
       );
     });
 

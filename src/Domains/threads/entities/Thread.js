@@ -9,8 +9,9 @@ class Thread {
     this.owner = owner;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _verifyPayload(payload) {
-    if (payload == undefined) {
+    if (payload === undefined) {
       throw new Error('THREAD.NOT_CONTAIN_PAYLOAD');
     }
 
@@ -20,9 +21,9 @@ class Thread {
     }
 
     if (
-      typeof title !== 'string' ||
-      typeof id !== 'string' ||
-      typeof owner !== 'string'
+      typeof title !== 'string'
+      || typeof id !== 'string'
+      || typeof owner !== 'string'
     ) {
       throw new Error('THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

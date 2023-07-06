@@ -13,7 +13,8 @@ class DeleteCommentUseCase {
   }
 
   _verifyPayload(payload) {
-    if (payload == undefined) {
+    this.payload = payload;
+    if (payload === undefined) {
       throw new Error('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_PAYLOAD');
     }
 
@@ -21,17 +22,17 @@ class DeleteCommentUseCase {
 
     if (!commentId || !threadId || !userId) {
       throw new Error(
-        'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+        'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
       );
     }
 
     if (
-      typeof commentId !== 'string' ||
-      typeof threadId !== 'string' ||
-      typeof userId !== 'string'
+      typeof commentId !== 'string'
+      || typeof threadId !== 'string'
+      || typeof userId !== 'string'
     ) {
       throw new Error(
-        'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+        'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
       );
     }
   }

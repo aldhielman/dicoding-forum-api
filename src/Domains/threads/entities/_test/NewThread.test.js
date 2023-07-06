@@ -4,7 +4,7 @@ describe('a NewThread entities', () => {
   it('should throw error when no payload ', () => {
     // Action and Assert
     expect(() => new NewThread()).toThrowError(
-      'NEW_THREAD.NOT_CONTAIN_PAYLOAD'
+      'NEW_THREAD.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -12,12 +12,12 @@ describe('a NewThread entities', () => {
     // Arrange
     const payload = {
       title: 'abc',
-      user_id: 'user-123',
+      userId: 'user-123',
     };
 
     // Action and Assert
     expect(() => new NewThread(payload)).toThrowError(
-      'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY'
+      'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -26,12 +26,12 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 123,
       body: true,
-      user_id: 'user-123',
+      userId: 'user-123',
     };
 
     // Action and Assert
     expect(() => new NewThread(payload)).toThrowError(
-      'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 
@@ -40,12 +40,12 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 'dicodingindonesiadicodingindonesiadicodingindonesiadicoding',
       body: 'Dicoding Indonesia',
-      user_id: 'user-123',
+      userId: 'user-123',
     };
 
     // Action and Assert
     expect(() => new NewThread(payload)).toThrowError(
-      'NEW_THREAD.TITLE_LIMIT_CHAR'
+      'NEW_THREAD.TITLE_LIMIT_CHAR',
     );
   });
 
@@ -54,15 +54,15 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 'Title 1',
       body: 'Body 1',
-      user_id: 'user-123',
+      userId: 'user-123',
     };
 
     // Action
-    const { title, body, user_id } = new NewThread(payload);
+    const { title, body, userId } = new NewThread(payload);
 
     // Assert
     expect(title).toEqual(payload.title);
     expect(body).toEqual(payload.body);
-    expect(user_id).toEqual(payload.user_id);
+    expect(userId).toEqual(payload.userId);
   });
 });

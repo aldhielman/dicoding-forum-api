@@ -8,14 +8,13 @@ class AuthenticationsHandler {
 
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
     this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
-    this.deleteAuthenticationHandler =
-      this.deleteAuthenticationHandler.bind(this);
+    this.deleteAuthenticationHandler = this.deleteAuthenticationHandler.bind(this);
   }
 
   async postAuthenticationHandler(request, h) {
     const loginUserUseCase = this._container.getInstance(LoginUserUseCase.name);
     const { accessToken, refreshToken } = await loginUserUseCase.execute(
-      request.payload
+      request.payload,
     );
     const response = h.response({
       status: 'success',
@@ -30,10 +29,10 @@ class AuthenticationsHandler {
 
   async putAuthenticationHandler(request) {
     const refreshAuthenticationUseCase = this._container.getInstance(
-      RefreshAuthenticationUseCase.name
+      RefreshAuthenticationUseCase.name,
     );
     const accessToken = await refreshAuthenticationUseCase.execute(
-      request.payload
+      request.payload,
     );
 
     return {
@@ -46,7 +45,7 @@ class AuthenticationsHandler {
 
   async deleteAuthenticationHandler(request) {
     const logoutUserUseCase = this._container.getInstance(
-      LogoutUserUseCase.name
+      LogoutUserUseCase.name,
     );
     await logoutUserUseCase.execute(request.payload);
     return {

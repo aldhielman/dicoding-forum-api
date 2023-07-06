@@ -1,7 +1,6 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const Comment = require('../../../Domains/comments/entities/Comment');
-const Thread = require('../../../Domains/threads/entities/Thread');
 const AddCommentUseCase = require('../AddCommentUseCase');
 
 describe('AddCommentUseCase', () => {
@@ -11,7 +10,7 @@ describe('AddCommentUseCase', () => {
 
     // Action & Assert
     await expect(addCommentUseCase.execute()).rejects.toThrowError(
-      'ADD_COMMENT_USE_CASE.NOT_CONTAIN_PAYLOAD'
+      'ADD_COMMENT_USE_CASE.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -19,16 +18,16 @@ describe('AddCommentUseCase', () => {
     // Arrange
     const useCasePayload = {
       content: 'Comment 1',
-      user_id: 'user-123',
+      userId: 'user-123',
     };
 
     const addCommentUseCase = new AddCommentUseCase({});
 
     // Action and Assert
     await expect(
-      addCommentUseCase.execute(useCasePayload)
+      addCommentUseCase.execute(useCasePayload),
     ).rejects.toThrowError(
-      'ADD_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'ADD_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -36,17 +35,17 @@ describe('AddCommentUseCase', () => {
     // Arrange
     const useCasePayload = {
       content: 123,
-      thread_id: true,
-      user_id: {},
+      threadId: true,
+      userId: {},
     };
 
     const addCommentUseCase = new AddCommentUseCase({});
 
     // Action and Assert
     await expect(
-      addCommentUseCase.execute(useCasePayload)
+      addCommentUseCase.execute(useCasePayload),
     ).rejects.toThrowError(
-      'ADD_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'ADD_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 
@@ -54,14 +53,14 @@ describe('AddCommentUseCase', () => {
     // Arrange
     const useCasePayload = {
       content: 'Comment 1',
-      user_id: 'user-123',
-      thread_id: 'thread-123',
+      userId: 'user-123',
+      threadId: 'thread-123',
     };
 
     const mockComment = new Comment({
       id: 'comment-123',
       content: useCasePayload.content,
-      owner: useCasePayload.user_id,
+      owner: useCasePayload.userId,
     });
 
     /** creating dependency of use case */
@@ -91,17 +90,17 @@ describe('AddCommentUseCase', () => {
       new Comment({
         id: 'comment-123',
         content: useCasePayload.content,
-        owner: useCasePayload.user_id,
-      })
+        owner: useCasePayload.userId,
+      }),
     );
 
     expect(mockThreadRepository.viewThread).toBeCalledWith(
-      useCasePayload.thread_id
+      useCasePayload.threadId,
     );
     expect(mockCommentRepository.addComment).toBeCalledWith({
       content: useCasePayload.content,
-      user_id: useCasePayload.user_id,
-      thread_id: useCasePayload.thread_id,
+      userId: useCasePayload.userId,
+      threadId: useCasePayload.threadId,
     });
   });
 });

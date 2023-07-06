@@ -15,7 +15,7 @@ describe('a Comment entities', () => {
 
     // Action and Assert
     expect(() => new Comment(payload)).toThrowError(
-      'COMMENT.NOT_CONTAIN_NEEDED_PROPERTY'
+      'COMMENT.NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -29,7 +29,7 @@ describe('a Comment entities', () => {
 
     // Action and Assert
     expect(() => new Comment(payload)).toThrowError(
-      'COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 

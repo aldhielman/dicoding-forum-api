@@ -9,8 +9,8 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 describe('/threads/{threadId}/comments endpoint', () => {
   let token;
   let user;
-  let threadId = 'thread-123';
-  let commentId = 'comment-123';
+  const threadId = 'thread-123';
+  const commentId = 'comment-123';
 
   // Create User and Login. Store user and token every test running
   beforeEach(async () => {
@@ -106,7 +106,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'tidak dapat membuat comment baru karena properti yang dibutuhkan tidak ada'
+        'tidak dapat membuat comment baru karena properti yang dibutuhkan tidak ada',
       );
     });
 
@@ -134,7 +134,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'tidak dapat membuat comment baru karena tipe data tidak sesuai'
+        'tidak dapat membuat comment baru karena tipe data tidak sesuai',
       );
     });
 
@@ -143,8 +143,6 @@ describe('/threads/{threadId}/comments endpoint', () => {
         id: threadId,
         user_id: user.id,
       });
-
-      const thread = await ThreadsTableTestHelper.findThreadsById('thread-123');
 
       const requestPayload = {
         content: 'Comment 1',
@@ -244,7 +242,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       expect(response.statusCode).toEqual(403);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'anda tidak dapat menghapus komentar yang tidak anda buat'
+        'anda tidak dapat menghapus komentar yang tidak anda buat',
       );
     });
 

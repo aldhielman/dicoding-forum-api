@@ -1,16 +1,10 @@
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const NewThread = require('../../../Domains/threads/entities/NewThread');
-const Thread = require('../../../Domains/threads/entities/Thread');
 const pool = require('../../database/postgres/pool');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const CommentTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
-const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
-const Comment = require('../../../Domains/comments/entities/Comment');
-const { verify } = require('@hapi/jwt/lib/crypto');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
-const DetailComment = require('../../../Domains/comments/entities/DetailComment');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const Reply = require('../../../Domains/replies/entities/Reply');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
@@ -51,7 +45,7 @@ describe('ReplyRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123'; // stub!
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(
         pool,
-        fakeIdGenerator
+        fakeIdGenerator,
       );
 
       // Action
@@ -72,7 +66,7 @@ describe('ReplyRepositoryPostgres', () => {
       const fakeIdGenerator = () => '123'; // stub!
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(
         pool,
-        fakeIdGenerator
+        fakeIdGenerator,
       );
 
       // Action
@@ -84,7 +78,7 @@ describe('ReplyRepositoryPostgres', () => {
           id: 'reply-123',
           content: 'Content 1',
           owner: 'user-123',
-        })
+        }),
       );
     });
   });
@@ -112,13 +106,13 @@ describe('ReplyRepositoryPostgres', () => {
     it('should triger NotFound Exception when given replyId not found', async () => {
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         commentId: 'notFoundId',
         userId: 'user-test',
       };
 
       await expect(
-        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).rejects.toThrowError(NotFoundError);
     });
 
@@ -131,13 +125,13 @@ describe('ReplyRepositoryPostgres', () => {
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         replyId: 'reply-123',
         userId: 'user-123',
       };
 
       await expect(
-        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).resolves.not.toThrowError(NotFoundError);
     });
 
@@ -150,13 +144,13 @@ describe('ReplyRepositoryPostgres', () => {
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         replyId: 'reply-123',
         userId: 'user-999',
       };
 
       await expect(
-        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).rejects.toThrowError(AuthorizationError);
     });
 
@@ -169,13 +163,13 @@ describe('ReplyRepositoryPostgres', () => {
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         replyId: 'reply-123',
         userId: 'user-123',
       };
 
       await expect(
-        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).resolves.not.toThrowError(AuthorizationError);
     });
   });
@@ -197,14 +191,14 @@ describe('ReplyRepositoryPostgres', () => {
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-      result = await replyRepositoryPostgres.getRepliesByCommentId(
-        'comment-test'
+      const result = await replyRepositoryPostgres.getRepliesByCommentId(
+        'comment-test',
       );
 
       expect(result).toEqual([]);
     });
 
-    // it('should return an array of DetailComment object when there are comment on a thread', async () => {
+    // it('should return array of DetailComment when there are thread on comment', async () => {
     //   await UsersTableTestHelper.addUser({
     //     id: 'user-test',
     //     username: 'dicodingother',
@@ -223,7 +217,7 @@ describe('ReplyRepositoryPostgres', () => {
 
     //   const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-    //   result = await commentRepositoryPostgres.getCommentsByThreadId(
+    //   const result = await commentRepositoryPostgres.getCommentsByThreadId(
     //     'thread-test'
     //   );
 
@@ -263,7 +257,7 @@ describe('ReplyRepositoryPostgres', () => {
 
     //   const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-    //   result = await commentRepositoryPostgres.getCommentsByThreadId(
+    //   const result = await commentRepositoryPostgres.getCommentsByThreadId(
     //     'thread-test'
     //   );
 
@@ -305,7 +299,7 @@ describe('ReplyRepositoryPostgres', () => {
 
     //   const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-    //   result = await commentRepositoryPostgres.getCommentsByThreadId(
+    //   const result = await commentRepositoryPostgres.getCommentsByThreadId(
     //     'thread-test'
     //   );
 

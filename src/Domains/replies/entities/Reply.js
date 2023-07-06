@@ -9,8 +9,9 @@ class Reply {
     this.owner = owner;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _verifyPayload(payload) {
-    if (payload == undefined) {
+    if (payload === undefined) {
       throw new Error('REPLY.NOT_CONTAIN_PAYLOAD');
     }
 
@@ -20,9 +21,9 @@ class Reply {
     }
 
     if (
-      typeof content !== 'string' ||
-      typeof id !== 'string' ||
-      typeof owner !== 'string'
+      typeof content !== 'string'
+      || typeof id !== 'string'
+      || typeof owner !== 'string'
     ) {
       throw new Error('REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

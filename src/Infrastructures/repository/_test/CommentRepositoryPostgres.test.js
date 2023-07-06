@@ -1,16 +1,12 @@
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
-const NewThread = require('../../../Domains/threads/entities/NewThread');
-const Thread = require('../../../Domains/threads/entities/Thread');
 const pool = require('../../database/postgres/pool');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const CommentTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const Comment = require('../../../Domains/comments/entities/Comment');
-const { verify } = require('@hapi/jwt/lib/crypto');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const DetailComment = require('../../../Domains/comments/entities/DetailComment');
-const DetailReply = require('../../../Domains/replies/entities/DetailReply');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 
@@ -36,13 +32,13 @@ describe('CommentRepositoryPostgres', () => {
       // Arrange
       const commentPayload = {
         content: 'Comment 1',
-        user_id: 'user-123',
-        thread_id: 'thread-123',
+        userId: 'user-123',
+        threadId: 'thread-123',
       };
       const fakeIdGenerator = () => '123'; // stub!
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        fakeIdGenerator
+        fakeIdGenerator,
       );
 
       // Action
@@ -50,7 +46,7 @@ describe('CommentRepositoryPostgres', () => {
 
       // Assert
       const comments = await CommentTableTestHelper.findCommentsById(
-        'comment-123'
+        'comment-123',
       );
       expect(comments).toHaveLength(1);
     });
@@ -59,18 +55,18 @@ describe('CommentRepositoryPostgres', () => {
       // Arrange
       const commentPayload = {
         content: 'Comment 1',
-        user_id: 'user-123',
-        thread_id: 'thread-123',
+        userId: 'user-123',
+        threadId: 'thread-123',
       };
       const fakeIdGenerator = () => '123'; // stub!
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
-        fakeIdGenerator
+        fakeIdGenerator,
       );
 
       // Action
       const comment = await commentRepositoryPostgres.addComment(
-        commentPayload
+        commentPayload,
       );
 
       // Assert
@@ -79,7 +75,7 @@ describe('CommentRepositoryPostgres', () => {
           id: 'comment-123',
           content: 'Comment 1',
           owner: 'user-123',
-        })
+        }),
       );
     });
   });
@@ -97,7 +93,7 @@ describe('CommentRepositoryPostgres', () => {
 
       // Assert
       const comments = await CommentTableTestHelper.findCommentsById(
-        'comment-123'
+        'comment-123',
       );
 
       expect(comments).toHaveLength(1);
@@ -109,13 +105,13 @@ describe('CommentRepositoryPostgres', () => {
     it('should triger NotFound Exception when given commentId not found', async () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         commentId: 'notFoundId',
         userId: 'user-test',
       };
 
       await expect(
-        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).rejects.toThrowError(NotFoundError);
     });
 
@@ -136,13 +132,13 @@ describe('CommentRepositoryPostgres', () => {
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         commentId: 'comment-123',
         userId: 'user-test',
       };
 
       await expect(
-        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).resolves.not.toThrowError(NotFoundError);
     });
 
@@ -163,13 +159,13 @@ describe('CommentRepositoryPostgres', () => {
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         commentId: 'comment-123',
         userId: 'user-999',
       };
 
       await expect(
-        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).rejects.toThrowError(AuthorizationError);
     });
 
@@ -190,13 +186,13 @@ describe('CommentRepositoryPostgres', () => {
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
-      verifyOwnerPayload = {
+      const verifyOwnerPayload = {
         commentId: 'comment-123',
         userId: 'user-test',
       };
 
       await expect(
-        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).resolves.not.toThrowError(AuthorizationError);
     });
   });
@@ -216,11 +212,11 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
         {},
-        replyRepositoryPostgres
+        replyRepositoryPostgres,
       );
 
-      result = await commentRepositoryPostgres.getCommentsByThreadId(
-        'thread-test'
+      const result = await commentRepositoryPostgres.getCommentsByThreadId(
+        'thread-test',
       );
 
       expect(result).toEqual([]);
@@ -247,11 +243,11 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
         {},
-        replyRepositoryPostgres
+        replyRepositoryPostgres,
       );
 
-      result = await commentRepositoryPostgres.getCommentsByThreadId(
-        'thread-test'
+      const result = await commentRepositoryPostgres.getCommentsByThreadId(
+        'thread-test',
       );
 
       expect(result).toHaveLength(1);
@@ -292,11 +288,11 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
         {},
-        replyRepositoryPostgres
+        replyRepositoryPostgres,
       );
 
-      result = await commentRepositoryPostgres.getCommentsByThreadId(
-        'thread-test'
+      const result = await commentRepositoryPostgres.getCommentsByThreadId(
+        'thread-test',
       );
 
       expect(result).toHaveLength(2);
@@ -358,11 +354,11 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
         {},
-        replyRepositoryPostgres
+        replyRepositoryPostgres,
       );
 
-      result = await commentRepositoryPostgres.getCommentsByThreadId(
-        'thread-test'
+      const result = await commentRepositoryPostgres.getCommentsByThreadId(
+        'thread-test',
       );
 
       expect(result).toHaveLength(2);
@@ -385,7 +381,7 @@ describe('CommentRepositoryPostgres', () => {
       const commentId = 'notfound';
 
       await expect(
-        commentRepositoryPostgres.verifyCommentId(commentId)
+        commentRepositoryPostgres.verifyCommentId(commentId),
       ).rejects.toThrowError(NotFoundError);
     });
 
@@ -409,7 +405,7 @@ describe('CommentRepositoryPostgres', () => {
       const commentId = 'comment-123';
 
       await expect(
-        commentRepositoryPostgres.verifyCommentId(commentId)
+        commentRepositoryPostgres.verifyCommentId(commentId),
       ).resolves.not.toThrowError(NotFoundError);
     });
   });

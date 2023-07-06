@@ -1,5 +1,4 @@
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const NewThread = require('../../../Domains/threads/entities/NewThread');
 const DetailThread = require('../../../Domains/threads/entities/DetailThread');
 const ViewThreadUseCase = require('../ViewThreadUseCase');
 const DetailComment = require('../../../Domains/comments/entities/DetailComment');
@@ -67,7 +66,7 @@ describe('ViewUserUseCase', () => {
     expect(thread).toStrictEqual(mockDetailThread);
 
     expect(mockThreadRepository.viewThread).toBeCalledWith(
-      useCasePayload.threadId
+      useCasePayload.threadId,
     );
   });
 });

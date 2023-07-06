@@ -5,7 +5,7 @@ describe('a DetailComment entities', () => {
   it('should throw error when no payload ', () => {
     // Action and Assert
     expect(() => new DetailComment()).toThrowError(
-      'DETAIL_COMMENT.NOT_CONTAIN_PAYLOAD'
+      'DETAIL_COMMENT.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -18,7 +18,7 @@ describe('a DetailComment entities', () => {
 
     // Action and Assert
     expect(() => new DetailComment(payload)).toThrowError(
-      'DETAIL_COMMENT.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'DETAIL_COMMENT.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -34,7 +34,7 @@ describe('a DetailComment entities', () => {
 
     // Action and Assert
     expect(() => new DetailComment(payload)).toThrowError(
-      'DETAIL_COMMENT.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'DETAIL_COMMENT.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 

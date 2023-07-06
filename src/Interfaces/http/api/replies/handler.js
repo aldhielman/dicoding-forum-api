@@ -1,6 +1,4 @@
-const AddCommentUseCase = require('../../../../Applications/use_case/AddCommentUseCase');
 const AddReplyUseCase = require('../../../../Applications/use_case/AddReplyUseCase');
-const DeleteCommentUseCase = require('../../../../Applications/use_case/DeleteCommentUseCase');
 const DeleteReplyUseCase = require('../../../../Applications/use_case/DeleteReplyUseCase');
 
 class RepliesHandler {
@@ -28,9 +26,9 @@ class RepliesHandler {
     return response;
   }
 
-  async deleteReplyByIdHandler(request, h) {
+  async deleteReplyByIdHandler(request) {
     const deleteReplyUseCase = this._container.getInstance(
-      DeleteReplyUseCase.name
+      DeleteReplyUseCase.name,
     );
     request.params.userId = request.auth.credentials.id;
     await deleteReplyUseCase.execute(request.params);

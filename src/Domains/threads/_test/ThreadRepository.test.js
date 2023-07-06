@@ -7,13 +7,13 @@ describe('ThreadRepository interface', () => {
 
     // Action and Assert
     await expect(threadRepository.addThread({})).rejects.toThrowError(
-      'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED'
+      'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED',
     );
     await expect(threadRepository.viewThread('')).rejects.toThrowError(
-      'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED'
+      'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED',
     );
     await expect(threadRepository.verifyThreadId('')).rejects.toThrowError(
-      'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED'
+      'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED',
     );
   });
 });

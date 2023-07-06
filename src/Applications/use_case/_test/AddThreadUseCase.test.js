@@ -12,14 +12,14 @@ describe('AddUserUseCase', () => {
     const useCasePayload = {
       title: 'Title 1',
       body: 'Body 1',
-      user_id: 'user-123',
+      userId: 'user-123',
     };
 
     const mockThread = new Thread({
       id: 'thread-123',
       title: useCasePayload.title,
       body: useCasePayload.body,
-      owner: useCasePayload.user_id,
+      owner: useCasePayload.userId,
     });
 
     /** creating dependency of use case */
@@ -44,16 +44,16 @@ describe('AddUserUseCase', () => {
       new Thread({
         id: 'thread-123',
         title: useCasePayload.title,
-        owner: useCasePayload.user_id,
-      })
+        owner: useCasePayload.userId,
+      }),
     );
 
     expect(mockThreadRepository.addThread).toBeCalledWith(
       new NewThread({
         title: useCasePayload.title,
         body: useCasePayload.body,
-        user_id: useCasePayload.user_id,
-      })
+        userId: useCasePayload.userId,
+      }),
     );
   });
 });

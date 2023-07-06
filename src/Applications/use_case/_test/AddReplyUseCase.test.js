@@ -1,6 +1,5 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const Comment = require('../../../Domains/comments/entities/Comment');
 const Reply = require('../../../Domains/replies/entities/Reply');
 const AddReplyUseCase = require('../AddReplyUseCase');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
@@ -12,7 +11,7 @@ describe('AddReplyUseCase', () => {
 
     // Action & Assert
     await expect(addReplyUseCase.execute()).rejects.toThrowError(
-      'ADD_REPLY_USE_CASE.NOT_CONTAIN_PAYLOAD'
+      'ADD_REPLY_USE_CASE.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -27,7 +26,7 @@ describe('AddReplyUseCase', () => {
 
     // Action and Assert
     await expect(addReplyUseCase.execute(useCasePayload)).rejects.toThrowError(
-      'ADD_REPLY_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'ADD_REPLY_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -44,7 +43,7 @@ describe('AddReplyUseCase', () => {
 
     // Action and Assert
     await expect(addReplyUseCase.execute(useCasePayload)).rejects.toThrowError(
-      'ADD_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'ADD_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 
@@ -97,15 +96,15 @@ describe('AddReplyUseCase', () => {
         id: 'reply-123',
         content: useCasePayload.content,
         owner: useCasePayload.userId,
-      })
+      }),
     );
 
     expect(mockThreadRepository.verifyThreadId).toBeCalledWith(
-      useCasePayload.threadId
+      useCasePayload.threadId,
     );
 
     expect(mockCommentRepository.verifyCommentId).toBeCalledWith(
-      useCasePayload.commentId
+      useCasePayload.commentId,
     );
     expect(mockReplyRepository.addReply).toBeCalledWith({
       content: useCasePayload.content,

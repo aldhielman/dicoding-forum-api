@@ -1,8 +1,5 @@
 class RefreshAuthenticationUseCase {
-  constructor({
-    authenticationRepository,
-    authenticationTokenManager,
-  }) {
+  constructor({ authenticationRepository, authenticationTokenManager }) {
     this._authenticationRepository = authenticationRepository;
     this._authenticationTokenManager = authenticationTokenManager;
   }
@@ -20,14 +17,19 @@ class RefreshAuthenticationUseCase {
   }
 
   _verifyPayload(payload) {
-    const { refreshToken } = payload;
+    this.payload = payload;
+    const { refreshToken } = this.payload;
 
     if (!refreshToken) {
-      throw new Error('REFRESH_AUTHENTICATION_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+      throw new Error(
+        'REFRESH_AUTHENTICATION_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN',
+      );
     }
 
     if (typeof refreshToken !== 'string') {
-      throw new Error('REFRESH_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+      throw new Error(
+        'REFRESH_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
+      );
     }
   }
 }

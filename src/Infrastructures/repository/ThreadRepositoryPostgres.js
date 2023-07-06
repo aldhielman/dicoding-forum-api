@@ -12,22 +12,21 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   }
 
   async addThread(payload) {
-    const { title, body, user_id } = payload;
-    const created_at = new Date().toISOString();
+    const { title, body, userId } = payload;
+    const createdAt = new Date().toISOString();
     const id = `thread-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5) RETURNING id, title, user_id',
-      values: [id, title, body, user_id, created_at],
+      text: 'INSERT INTO threads VALUES($1, $2, $3, $4, $5) RETURNING id, title, user_id as "userId" ',
+      values: [id, title, body, userId, createdAt],
     };
 
     const result = await this._pool.query(query);
 
     return new Thread({
-      ...result.rows.map(({ id, title, user_id }) => ({
-        id,
-        title,
-        owner: user_id,
+      ...result.rows.map((data) => ({
+        ...data,
+        owner: data.userId,
       }))[0],
     });
   }
@@ -47,7 +46,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
   async viewThread(id) {
     const query = {
-      text: 'SELECT t.id, t.title, t.body, t.created_at, u.username FROM threads t LEFT JOIN users u ON t.user_id = u.id WHERE t.id = $1',
+      text: 'SELECT t.id, t.title, t.body, t.created_at as "createdAt", u.username FROM threads t LEFT JOIN users u ON t.user_id = u.id WHERE t.id = $1',
       values: [id],
     };
 
@@ -57,19 +56,16 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       throw new NotFoundError('thread tidak ditemukan');
     }
 
-    return result.rows.map(
-      async ({ id, title, body, created_at, username }) => {
-        let comments = await this._commentRepository.getCommentsByThreadId(id);
-        return new DetailThread({
-          id,
-          title,
-          body,
-          date: created_at,
-          username,
-          comments,
-        });
-      }
-    )[0];
+    return result.rows.map(async (data) => {
+      const comments = await this._commentRepository.getCommentsByThreadId(
+        data.id,
+      );
+      return new DetailThread({
+        ...data,
+        date: data.createdAt,
+        comments,
+      });
+    })[0];
   }
 }
 

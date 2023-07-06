@@ -10,9 +10,9 @@ const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper
 describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
   let token;
   let user;
-  let threadId = 'thread-123';
-  let commentId = 'comment-123';
-  let replyId = 'reply-123';
+  const threadId = 'thread-123';
+  const commentId = 'comment-123';
+  const replyId = 'reply-123';
 
   // Create User and Login. Store user and token every test running
   beforeEach(async () => {
@@ -141,7 +141,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada'
+        'tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada',
       );
     });
 
@@ -178,7 +178,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'tidak dapat membuat reply baru karena tipe data tidak sesuai'
+        'tidak dapat membuat reply baru karena tipe data tidak sesuai',
       );
     });
 
@@ -327,7 +327,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       expect(response.statusCode).toEqual(403);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'anda tidak dapat menghapus reply yang tidak anda buat'
+        'anda tidak dapat menghapus reply yang tidak anda buat',
       );
     });
 

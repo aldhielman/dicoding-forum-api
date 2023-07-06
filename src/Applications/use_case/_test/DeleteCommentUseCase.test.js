@@ -1,6 +1,5 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const Comment = require('../../../Domains/comments/entities/Comment');
 const DeleteCommentUseCase = require('../DeleteCommentUseCase');
 
 describe('DeleteCommentUseCase', () => {
@@ -10,7 +9,7 @@ describe('DeleteCommentUseCase', () => {
 
     // Action & Assert
     await expect(deleteCommentUseCase.execute()).rejects.toThrowError(
-      'DELETE_COMMENT_USE_CASE.NOT_CONTAIN_PAYLOAD'
+      'DELETE_COMMENT_USE_CASE.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -24,9 +23,9 @@ describe('DeleteCommentUseCase', () => {
 
     // Action and Assert
     await expect(
-      deleteCommentUseCase.execute(useCasePayload)
+      deleteCommentUseCase.execute(useCasePayload),
     ).rejects.toThrowError(
-      'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -42,9 +41,9 @@ describe('DeleteCommentUseCase', () => {
 
     // Action and Assert
     await expect(
-      deleteCommentUseCase.execute(useCasePayload)
+      deleteCommentUseCase.execute(useCasePayload),
     ).rejects.toThrowError(
-      'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 
@@ -79,16 +78,16 @@ describe('DeleteCommentUseCase', () => {
     });
 
     // Action
-    const response = await getCommentUseCase.execute(useCasePayload);
+    await getCommentUseCase.execute(useCasePayload);
 
     expect(mockThreadRepository.viewThread).toBeCalledWith(
-      useCasePayload.threadId
+      useCasePayload.threadId,
     );
 
     expect(mockCommentRepository.verifyOwner).toBeCalledWith(useCasePayload);
 
     expect(mockCommentRepository.deleteComment).toBeCalledWith(
-      useCasePayload.commentId
+      useCasePayload.commentId,
     );
   });
 });

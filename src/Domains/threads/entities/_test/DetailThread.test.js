@@ -5,7 +5,7 @@ describe('a DetailThread entities', () => {
   it('should throw error when no payload ', () => {
     // Action and Assert
     expect(() => new DetailThread()).toThrowError(
-      'DETAIL_THREAD.NOT_CONTAIN_PAYLOAD'
+      'DETAIL_THREAD.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -20,7 +20,7 @@ describe('a DetailThread entities', () => {
 
     // Action and Assert
     expect(() => new DetailThread(payload)).toThrowError(
-      'DETAIL_THREAD.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'DETAIL_THREAD.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -37,7 +37,7 @@ describe('a DetailThread entities', () => {
 
     // Action and Assert
     expect(() => new DetailThread(payload)).toThrowError(
-      'DETAIL_THREAD.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'DETAIL_THREAD.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 
@@ -61,8 +61,10 @@ describe('a DetailThread entities', () => {
     };
 
     // Action
-    const { id, title, body, date, username, comments } = new DetailThread(
-      payload
+    const {
+      id, title, body, date, username, comments,
+    } = new DetailThread(
+      payload,
     );
 
     // Assert

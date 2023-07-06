@@ -4,7 +4,7 @@ describe('a DetailReply entities', () => {
   it('should throw error when no payload ', () => {
     // Action and Assert
     expect(() => new DetailReply()).toThrowError(
-      'DETAIL_REPLY.NOT_CONTAIN_PAYLOAD'
+      'DETAIL_REPLY.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -17,7 +17,7 @@ describe('a DetailReply entities', () => {
 
     // Action and Assert
     expect(() => new DetailReply(payload)).toThrowError(
-      'DETAIL_REPLY.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'DETAIL_REPLY.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -32,7 +32,7 @@ describe('a DetailReply entities', () => {
 
     // Action and Assert
     expect(() => new DetailReply(payload)).toThrowError(
-      'DETAIL_REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'DETAIL_REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 

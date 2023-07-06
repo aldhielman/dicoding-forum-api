@@ -10,7 +10,7 @@ describe('DeleteReplyUseCase', () => {
 
     // Action & Assert
     await expect(deleteCommentUseCase.execute()).rejects.toThrowError(
-      'DELETE_REPLY_USE_CASE.NOT_CONTAIN_PAYLOAD'
+      'DELETE_REPLY_USE_CASE.NOT_CONTAIN_PAYLOAD',
     );
   });
 
@@ -24,9 +24,9 @@ describe('DeleteReplyUseCase', () => {
 
     // Action and Assert
     await expect(
-      deleteCommentUseCase.execute(useCasePayload)
+      deleteCommentUseCase.execute(useCasePayload),
     ).rejects.toThrowError(
-      'DELETE_REPLY_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'DELETE_REPLY_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -43,9 +43,9 @@ describe('DeleteReplyUseCase', () => {
 
     // Action and Assert
     await expect(
-      deleteReplyUseCase.execute(useCasePayload)
+      deleteReplyUseCase.execute(useCasePayload),
     ).rejects.toThrowError(
-      'DELETE_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'DELETE_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 
@@ -90,14 +90,14 @@ describe('DeleteReplyUseCase', () => {
 
     // Action
     expect(mockThreadRepository.verifyThreadId).toBeCalledWith(
-      useCasePayload.threadId
+      useCasePayload.threadId,
     );
     expect(mockCommentRepository.verifyCommentId).toBeCalledWith(
-      useCasePayload.commentId
+      useCasePayload.commentId,
     );
     expect(mockReplyRepository.verifyOwner).toBeCalledWith(useCasePayload);
     expect(mockReplyRepository.deleteReply).toBeCalledWith(
-      useCasePayload.replyId
+      useCasePayload.replyId,
     );
   });
 });

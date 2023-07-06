@@ -15,7 +15,7 @@ describe('a Reply entities', () => {
 
     // Action and Assert
     expect(() => new Reply(payload)).toThrowError(
-      'REPLY.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
+      'REPLY.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY',
     );
   });
 
@@ -29,7 +29,7 @@ describe('a Reply entities', () => {
 
     // Action and Assert
     expect(() => new Reply(payload)).toThrowError(
-      'REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
+      'REPLY.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION',
     );
   });
 

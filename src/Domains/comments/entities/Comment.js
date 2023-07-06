@@ -9,8 +9,9 @@ class Comment {
     this.owner = owner;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _verifyPayload(payload) {
-    if (payload == undefined) {
+    if (payload === undefined) {
       throw new Error('COMMENT.NOT_CONTAIN_PAYLOAD');
     }
 
@@ -20,9 +21,9 @@ class Comment {
     }
 
     if (
-      typeof content !== 'string' ||
-      typeof id !== 'string' ||
-      typeof owner !== 'string'
+      typeof content !== 'string'
+      || typeof id !== 'string'
+      || typeof owner !== 'string'
     ) {
       throw new Error('COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }

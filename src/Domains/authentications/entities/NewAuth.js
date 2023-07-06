@@ -6,6 +6,7 @@ class NewAuth {
     this.refreshToken = payload.refreshToken;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _verifyPayload(payload) {
     const { accessToken, refreshToken } = payload;
 
