@@ -34,35 +34,41 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     });
   }
 
-  // async deleteComment(commentId) {
-  //   const query = {
-  //     text: 'UPDATE comments SET is_deleted = true WHERE id = $1',
-  //     values: [commentId],
-  //   };
+  async deleteReply(replyId) {
+    const query = {
+      text: 'UPDATE replies SET is_deleted = true WHERE id = $1',
+      values: [replyId],
+    };
 
-  //   const result = await this._pool.query(query);
-  // }
+    await this._pool.query(query);
+  }
 
-  // async verifyOwner(payload) {
-  //   const { userId, commentId } = payload;
+  async verifyOwner(payload) {
+    const { userId, replyId } = payload;
 
-  //   const query = {
-  //     text: 'SELECT * FROM comments WHERE id = $1',
-  //     values: [commentId],
-  //   };
+    const result = await this.verifyReplyId(replyId);
 
-  //   const result = await this._pool.query(query);
+    if (result.user_id !== userId) {
+      throw new AuthorizationError(
+        'anda tidak dapat menghapus reply yang tidak anda buat'
+      );
+    }
+  }
 
-  //   if (!result.rowCount) {
-  //     throw new NotFoundError('comment tidak ditemukan');
-  //   }
+  async verifyReplyId(replyId) {
+    const query = {
+      text: 'SELECT * FROM replies WHERE id = $1',
+      values: [replyId],
+    };
 
-  //   if (result.rows[0].user_id !== userId) {
-  //     throw new AuthorizationError(
-  //       'anda tidak dapat menghapus komentar yang tidak anda buat'
-  //     );
-  //   }
-  // }
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('reply tidak ditemukan');
+    }
+
+    return result.rows[0];
+  }
 
   async getRepliesByCommentId(commentId) {
     const query = {

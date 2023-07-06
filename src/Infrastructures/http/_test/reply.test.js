@@ -60,7 +60,32 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
   });
 
   describe('when POST /threads/{threadId}/comments/{commentId}/replies', () => {
-    it('should response 404 when comment with given id not found', async () => {
+    it('should response 404 when threadId is invalid', async () => {
+      const requestPayload = {
+        content: 'Comment 1',
+      };
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'POST',
+        url: `/threads/${threadId}/comments/${commentId}/replies`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        payload: requestPayload,
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
+
+    it('should response 404 when commentId is invalid', async () => {
+      await ThreadsTableTestHelper.addThread({ id: threadId });
+
       const requestPayload = {
         content: 'Comment 1',
       };
@@ -193,114 +218,155 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     });
   });
 
-  // describe('when DELETE /threads/{threadId}/comment/{commentId}', () => {
-  //   it('should response 404 when comment with given threadId not found', async () => {
-  //     const server = await createServer(container);
+  describe('when DELETE /threads/{threadId}/comment/{commentId}/replies/{replyId}', () => {
+    it('should response 404 when threadId is invalid', async () => {
+      const server = await createServer(container);
 
-  //     // Action
-  //     const response = await server.inject({
-  //       method: 'DELETE',
-  //       url: `/threads/${threadId}/comments/${commentId}`,
-  //       headers: {
-  //         authorization: `Bearer ${token}`,
-  //       },
-  //     });
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/xxx/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-  //     // Assert
-  //     const responseJson = JSON.parse(response.payload);
-  //     expect(response.statusCode).toEqual(404);
-  //     expect(responseJson.status).toEqual('fail');
-  //     expect(responseJson.message).toEqual('thread tidak ditemukan');
-  //   });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
 
-  //   it('should response 404 when comment with given threadId found but commentId not found', async () => {
-  //     await ThreadsTableTestHelper.addThread({
-  //       id: threadId,
-  //       user_id: user.id,
-  //     });
+    it('should response 404 when commentId is invalid', async () => {
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        user_id: user.id,
+      });
 
-  //     const server = await createServer(container);
+      const server = await createServer(container);
 
-  //     // Action
-  //     const response = await server.inject({
-  //       method: 'DELETE',
-  //       url: `/threads/${threadId}/comments/${commentId}`,
-  //       headers: {
-  //         authorization: `Bearer ${token}`,
-  //       },
-  //     });
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-  //     // Assert
-  //     const responseJson = JSON.parse(response.payload);
-  //     expect(response.statusCode).toEqual(404);
-  //     expect(responseJson.status).toEqual('fail');
-  //     expect(responseJson.message).toEqual('comment tidak ditemukan');
-  //   });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('comment tidak ditemukan');
+    });
 
-  //   it('should response 403 when valid threadId and commentId is valid and comment was created by other user', async () => {
-  //     await UsersTableTestHelper.addUser({
-  //       id: 'user-other',
-  //       username: 'dicodingother',
-  //     });
-  //     await ThreadsTableTestHelper.addThread({
-  //       id: threadId,
-  //       user_id: user.id,
-  //     });
-  //     await CommentsTableTestHelper.addComment({
-  //       id: commentId,
-  //       user_id: 'user-other',
-  //     });
+    it('should response 404 when comment with given commentId found but replytId not found', async () => {
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        user_id: user.id,
+      });
 
-  //     const server = await createServer(container);
+      await CommentsTableTestHelper.addComment({
+        id: commentId,
+        thread_id: threadId,
+        user_id: user.id,
+      });
 
-  //     // Action
-  //     const response = await server.inject({
-  //       method: 'DELETE',
-  //       url: `/threads/${threadId}/comments/${commentId}`,
-  //       headers: {
-  //         authorization: `Bearer ${token}`,
-  //       },
-  //     });
+      const server = await createServer(container);
 
-  //     // Assert
-  //     const responseJson = JSON.parse(response.payload);
-  //     expect(response.statusCode).toEqual(403);
-  //     expect(responseJson.status).toEqual('fail');
-  //     expect(responseJson.message).toEqual(
-  //       'anda tidak dapat menghapus komentar yang tidak anda buat'
-  //     );
-  //   });
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-  //   it('should response 200 and return response deletion when threadId and commendId found using user that created comment', async () => {
-  //     await UsersTableTestHelper.addUser({
-  //       id: 'user-other',
-  //       username: 'dicodingother',
-  //     });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('reply tidak ditemukan');
+    });
 
-  //     await ThreadsTableTestHelper.addThread({
-  //       id: threadId,
-  //       user_id: 'user-other',
-  //     });
+    it('should response 403 when valid commentId and replyId is valid and comment was created by other user', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-other',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        user_id: user.id,
+      });
+      await CommentsTableTestHelper.addComment({
+        id: commentId,
+        user_id: 'user-other',
+      });
 
-  //     await CommentsTableTestHelper.addComment({
-  //       id: commentId,
-  //       thread_id: threadId,
-  //       user_id: user.id,
-  //     });
+      await RepliesTableTestHelper.addReply({
+        id: replyId,
+        user_id: 'user-other',
+      });
 
-  //     const server = await createServer(container);
+      const server = await createServer(container);
 
-  //     const response = await server.inject({
-  //       method: 'DELETE',
-  //       url: `/threads/${threadId}/comments/${commentId}`,
-  //       headers: {
-  //         authorization: `Bearer ${token}`,
-  //       },
-  //     });
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-  //     const responseJson = JSON.parse(response.payload);
-  //     expect(response.statusCode).toEqual(200);
-  //     expect(responseJson.status).toEqual('success');
-  //   });
-  // });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual(
+        'anda tidak dapat menghapus reply yang tidak anda buat'
+      );
+    });
+
+    it('should response 200 and return response deletion when commentId and replyId found using user that created comment', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-other',
+        username: 'dicodingother',
+      });
+
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        user_id: 'user-other',
+      });
+
+      await CommentsTableTestHelper.addComment({
+        id: commentId,
+        thread_id: threadId,
+        user_id: user.id,
+      });
+
+      await RepliesTableTestHelper.addReply({
+        id: replyId,
+        comment_id: commentId,
+        user_id: user.id,
+      });
+
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+  });
 });

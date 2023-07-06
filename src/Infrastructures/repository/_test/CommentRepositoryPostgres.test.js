@@ -254,8 +254,6 @@ describe('CommentRepositoryPostgres', () => {
         'thread-test'
       );
 
-      console.log(result);
-
       expect(result).toHaveLength(1);
       result.forEach((item) => {
         expect(item).toBeInstanceOf(DetailComment);

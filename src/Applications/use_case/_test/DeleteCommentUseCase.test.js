@@ -35,6 +35,7 @@ describe('DeleteCommentUseCase', () => {
     const useCasePayload = {
       commentId: 123,
       threadId: true,
+      userId: {},
     };
 
     const deleteCommentUseCase = new DeleteCommentUseCase({});

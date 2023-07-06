@@ -89,122 +89,96 @@ describe('ReplyRepositoryPostgres', () => {
     });
   });
 
-  // describe('deleteComment function', () => {
-  //   it('should update is_deleted to true on table comment', async () => {
-  //     const commentId = 'comment-123';
+  describe('deleteReply function', () => {
+    it('should update is_deleted to true on table reply', async () => {
+      const replyId = 'reply-123';
 
-  //     await CommentTableTestHelper.addComment({ id: commentId });
+      await RepliesTableTestHelper.addReply({ id: replyId });
 
-  //     const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-  //     // Action
-  //     await commentRepositoryPostgres.deleteComment(commentId);
+      // Action
+      await replyRepositoryPostgres.deleteReply(replyId);
 
-  //     // Assert
-  //     const comments = await CommentTableTestHelper.findCommentsById(
-  //       'comment-123'
-  //     );
+      // Assert
+      const replies = await RepliesTableTestHelper.findRepliesById('reply-123');
 
-  //     expect(comments).toHaveLength(1);
-  //     expect(comments[0].is_deleted).toEqual(true);
-  //   });
-  // });
+      expect(replies).toHaveLength(1);
+      expect(replies[0].is_deleted).toEqual(true);
+    });
+  });
 
-  // describe('verifyOwner function', () => {
-  //   it('should triger NotFound Exception when given commentId not found', async () => {
-  //     const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+  describe('verifyOwner function', () => {
+    it('should triger NotFound Exception when given replyId not found', async () => {
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-  //     verifyOwnerPayload = {
-  //       commentId: 'notFoundId',
-  //       userId: 'user-test',
-  //     };
+      verifyOwnerPayload = {
+        commentId: 'notFoundId',
+        userId: 'user-test',
+      };
 
-  //     await expect(
-  //       commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
-  //     ).rejects.toThrowError(NotFoundError);
-  //   });
+      await expect(
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+      ).rejects.toThrowError(NotFoundError);
+    });
 
-  //   it('should not triger NotFound Exception when given commentId found', async () => {
-  //     await UsersTableTestHelper.addUser({
-  //       id: 'user-test',
-  //       username: 'dicodingother',
-  //     });
-  //     await ThreadsTableTestHelper.addThread({
-  //       id: 'thread-test',
-  //       userId: 'user-test',
-  //     });
-  //     await CommentTableTestHelper.addComment({
-  //       id: 'comment-123',
-  //       userId: 'user-test',
-  //       commentId: 'thread-test',
-  //     });
+    it('should not triger NotFound Exception when given replyId found', async () => {
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        userId: 'user-123',
+        commentId: 'comment-123',
+      });
 
-  //     const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-  //     verifyOwnerPayload = {
-  //       commentId: 'comment-123',
-  //       userId: 'user-test',
-  //     };
+      verifyOwnerPayload = {
+        replyId: 'reply-123',
+        userId: 'user-123',
+      };
 
-  //     await expect(
-  //       commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
-  //     ).resolves.not.toThrowError(NotFoundError);
-  //   });
+      await expect(
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+      ).resolves.not.toThrowError(NotFoundError);
+    });
 
-  //   it('should triger AuthorizationError Exception when user id is not same comment owner', async () => {
-  //     await UsersTableTestHelper.addUser({
-  //       id: 'user-test',
-  //       username: 'dicodingother',
-  //     });
-  //     await ThreadsTableTestHelper.addThread({
-  //       id: 'thread-test',
-  //       userId: 'user-test',
-  //     });
-  //     await CommentTableTestHelper.addComment({
-  //       id: 'comment-123',
-  //       userId: 'user-test',
-  //       commentId: 'thread-test',
-  //     });
+    it('should triger AuthorizationError Exception when user id is not same comment owner', async () => {
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        userId: 'user-123',
+        commentId: 'comment-123',
+      });
 
-  //     const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-  //     verifyOwnerPayload = {
-  //       commentId: 'comment-123',
-  //       userId: 'user-999',
-  //     };
+      verifyOwnerPayload = {
+        replyId: 'reply-123',
+        userId: 'user-999',
+      };
 
-  //     await expect(
-  //       commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
-  //     ).rejects.toThrowError(AuthorizationError);
-  //   });
+      await expect(
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+      ).rejects.toThrowError(AuthorizationError);
+    });
 
-  //   it('should triger AuthorizationError Exception when user id is same  comment owner', async () => {
-  //     await UsersTableTestHelper.addUser({
-  //       id: 'user-test',
-  //       username: 'dicodingother',
-  //     });
-  //     await ThreadsTableTestHelper.addThread({
-  //       id: 'thread-test',
-  //       userId: 'user-test',
-  //     });
-  //     await CommentTableTestHelper.addComment({
-  //       id: 'comment-123',
-  //       userId: 'user-test',
-  //       commentId: 'thread-test',
-  //     });
+    it('should not triger AuthorizationError Exception when user id is same  comment owner', async () => {
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        userId: 'user-123',
+        commentId: 'comment-123',
+      });
 
-  //     const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
-  //     verifyOwnerPayload = {
-  //       commentId: 'comment-123',
-  //       userId: 'user-test',
-  //     };
+      verifyOwnerPayload = {
+        replyId: 'reply-123',
+        userId: 'user-123',
+      };
 
-  //     await expect(
-  //       commentRepositoryPostgres.verifyOwner(verifyOwnerPayload)
-  //     ).resolves.not.toThrowError(AuthorizationError);
-  //   });
-  // });
+      await expect(
+        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload)
+      ).resolves.not.toThrowError(AuthorizationError);
+    });
+  });
 
   describe('getRepliesByCommentId function', () => {
     it('should return an empty array when there are no replies on a comment', async () => {

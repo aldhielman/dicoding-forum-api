@@ -3,6 +3,7 @@ const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 const Comment = require('../../../Domains/comments/entities/Comment');
 const Reply = require('../../../Domains/replies/entities/Reply');
 const AddReplyUseCase = require('../AddReplyUseCase');
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 
 describe('AddReplyUseCase', () => {
   it('should throw error if no payload', async () => {
@@ -36,6 +37,7 @@ describe('AddReplyUseCase', () => {
       content: 123,
       commentId: true,
       userId: {},
+      threadId: 'thread-123',
     };
 
     const addReplyUseCase = new AddReplyUseCase({});
@@ -50,6 +52,7 @@ describe('AddReplyUseCase', () => {
     // Arrange
     const useCasePayload = {
       content: 'Comment 1',
+      threadId: 'thread-123',
       userId: 'user-123',
       commentId: 'comment-123',
     };
@@ -61,6 +64,7 @@ describe('AddReplyUseCase', () => {
     });
 
     /** creating dependency of use case */
+    const mockThreadRepository = new ThreadRepository();
     const mockReplyRepository = new ReplyRepository();
     const mockCommentRepository = new CommentRepository();
 
@@ -68,6 +72,10 @@ describe('AddReplyUseCase', () => {
     mockReplyRepository.addReply = jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockReply));
+
+    mockThreadRepository.verifyThreadId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
 
     mockCommentRepository.verifyCommentId = jest
       .fn()
@@ -77,6 +85,7 @@ describe('AddReplyUseCase', () => {
     const getReplyUseCase = new AddReplyUseCase({
       replyRepository: mockReplyRepository,
       commentRepository: mockCommentRepository,
+      threadRepository: mockThreadRepository,
     });
 
     // Action
@@ -91,6 +100,10 @@ describe('AddReplyUseCase', () => {
       })
     );
 
+    expect(mockThreadRepository.verifyThreadId).toBeCalledWith(
+      useCasePayload.threadId
+    );
+
     expect(mockCommentRepository.verifyCommentId).toBeCalledWith(
       useCasePayload.commentId
     );
@@ -98,6 +111,7 @@ describe('AddReplyUseCase', () => {
       content: useCasePayload.content,
       userId: useCasePayload.userId,
       commentId: useCasePayload.commentId,
+      threadId: useCasePayload.threadId,
     });
   });
 });

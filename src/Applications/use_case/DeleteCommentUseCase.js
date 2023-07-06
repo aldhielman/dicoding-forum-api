@@ -17,15 +17,19 @@ class DeleteCommentUseCase {
       throw new Error('DELETE_COMMENT_USE_CASE.NOT_CONTAIN_PAYLOAD');
     }
 
-    const { commentId, threadId } = payload;
+    const { commentId, threadId, userId } = payload;
 
-    if (!commentId || !threadId) {
+    if (!commentId || !threadId || !userId) {
       throw new Error(
         'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY'
       );
     }
 
-    if (typeof commentId !== 'string' || typeof threadId !== 'string') {
+    if (
+      typeof commentId !== 'string' ||
+      typeof threadId !== 'string' ||
+      typeof userId !== 'string'
+    ) {
       throw new Error(
         'DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION'
       );

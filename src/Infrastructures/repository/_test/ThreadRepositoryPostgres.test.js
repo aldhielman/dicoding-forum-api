@@ -70,16 +70,11 @@ describe('ThreadRepositoryPostgres', () => {
     });
   });
 
-  describe('viewThread function', () => {
+  describe('verifyThreadId function', () => {
     it('should trigger NotFound Exception when threadId not found', async () => {
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
-        pool,
-        {},
-        commentRepositoryPostgres
-      );
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool);
       await expect(
-        threadRepositoryPostgres.viewThread('notFoundId')
+        threadRepositoryPostgres.verifyThreadId('notFoundId')
       ).rejects.toThrowError(NotFoundError);
     });
 
@@ -90,18 +85,15 @@ describe('ThreadRepositoryPostgres', () => {
         user_id: 'user-123',
       });
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
-        pool,
-        {},
-        commentRepositoryPostgres
-      );
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool);
 
       await expect(
-        threadRepositoryPostgres.viewThread('thread-123')
+        threadRepositoryPostgres.verifyThreadId('thread-123')
       ).resolves.not.toThrowError(NotFoundError);
     });
+  });
 
+  describe('viewThread function', () => {
     it('should return thread correctly', async () => {
       const date = new Date().toISOString();
 
