@@ -103,49 +103,31 @@ describe('ReplyRepositoryPostgres', () => {
   });
 
   describe('verifyOwner function', () => {
-    it('should triger NotFound Exception when given replyId not found', async () => {
-      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
-
-      const verifyOwnerPayload = {
-        commentId: 'notFoundId',
+    it('should triger AuthorizationError Exception when user id is not same reply owner', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
         userId: 'user-test',
-      };
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
+      });
 
-      await expect(
-        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
-      ).rejects.toThrowError(NotFoundError);
-    });
-
-    it('should not triger NotFound Exception when given replyId found', async () => {
       await RepliesTableTestHelper.addReply({
-        id: 'reply-123',
-        userId: 'user-123',
-        commentId: 'comment-123',
+        id: 'reply-test',
+        userId: 'user-test',
+        commentId: 'comment-test',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
       const verifyOwnerPayload = {
-        replyId: 'reply-123',
-        userId: 'user-123',
-      };
-
-      await expect(
-        replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
-      ).resolves.not.toThrowError(NotFoundError);
-    });
-
-    it('should triger AuthorizationError Exception when user id is not same comment owner', async () => {
-      await RepliesTableTestHelper.addReply({
-        id: 'reply-123',
-        userId: 'user-123',
-        commentId: 'comment-123',
-      });
-
-      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
-
-      const verifyOwnerPayload = {
-        replyId: 'reply-123',
+        replyId: 'reply-test',
         userId: 'user-999',
       };
 
@@ -154,23 +136,79 @@ describe('ReplyRepositoryPostgres', () => {
       ).rejects.toThrowError(AuthorizationError);
     });
 
-    it('should not triger AuthorizationError Exception when user id is same  comment owner', async () => {
+    it('should triger AuthorizationError Exception when user id is same reply owner', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        userId: 'user-test',
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
+      });
+
       await RepliesTableTestHelper.addReply({
-        id: 'reply-123',
-        userId: 'user-123',
-        commentId: 'comment-123',
+        id: 'reply-test',
+        userId: 'user-test',
+        commentId: 'comment-test',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
 
       const verifyOwnerPayload = {
-        replyId: 'reply-123',
-        userId: 'user-123',
+        replyId: 'reply-test',
+        userId: 'user-test',
       };
 
       await expect(
         replyRepositoryPostgres.verifyOwner(verifyOwnerPayload),
       ).resolves.not.toThrowError(AuthorizationError);
+    });
+  });
+
+  describe('verifyReplyId function', () => {
+    it('should triger NotFound Exception when given replyId not found', async () => {
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+
+      const replyId = 'notfound';
+
+      await expect(
+        replyRepositoryPostgres.verifyReplyId(replyId),
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not triger NotFound Exception when given commentId found', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        userId: 'user-test',
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-test',
+        userId: 'user-test',
+        threadId: 'thread-test',
+      });
+
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        userId: 'user-test',
+        commentId: 'comment-test',
+      });
+
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
+
+      const replyId = 'reply-123';
+
+      await expect(
+        replyRepositoryPostgres.verifyReplyId(replyId),
+      ).resolves.not.toThrowError(NotFoundError);
     });
   });
 
@@ -254,13 +292,15 @@ describe('ReplyRepositoryPostgres', () => {
       await RepliesTableTestHelper.addReply({
         id: 'reply-123',
         commentId: 'comment-test',
-        createdAt: new Date().toISOString(),
+        createdAt: '2023-07-04T05:19:09.775Z',
+        userId: 'user-test',
       });
 
       await RepliesTableTestHelper.addReply({
         id: 'reply-456',
         commentId: 'comment-test',
-        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+        createdAt: '2023-07-03T05:19:09.775Z',
+        userId: 'user-test',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -271,6 +311,15 @@ describe('ReplyRepositoryPostgres', () => {
 
       expect(result).toHaveLength(2);
       expect(result[0].id).toEqual('reply-456');
+      expect(result[0].username).toEqual('dicodingother');
+      expect(result[0].date).toEqual('2023-07-03T05:19:09.775Z');
+      expect(result[0].content).toEqual('Content 1');
+      expect(result[0].isDeleted).toEqual(false);
+      expect(result[1].id).toEqual('reply-123');
+      expect(result[1].username).toEqual('dicodingother');
+      expect(result[1].date).toEqual('2023-07-04T05:19:09.775Z');
+      expect(result[1].content).toEqual('Content 1');
+      expect(result[1].isDeleted).toEqual(false);
     });
 
     it('should return correct content when reply is deleted', async () => {
@@ -294,21 +343,20 @@ describe('ReplyRepositoryPostgres', () => {
 
       // Reply 1
       await RepliesTableTestHelper.addReply({
-        id: 'reply-1',
+        id: 'reply-123',
         userId: 'user-test',
         commentId: 'comment-test',
-        content: 'Reply 1',
         isDeleted: false,
+        createdAt: '2023-07-04T05:19:09.775Z',
       });
 
       // Reply 2
       await RepliesTableTestHelper.addReply({
-        id: 'reply-2',
+        id: 'reply-456',
         userId: 'user-test',
         commentId: 'comment-test',
-        content: 'Reply 2',
         isDeleted: true,
-        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+        createdAt: '2023-07-03T05:19:09.775Z',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -318,10 +366,16 @@ describe('ReplyRepositoryPostgres', () => {
       );
 
       expect(result).toHaveLength(2);
-      expect(result[0].id).toEqual('reply-2');
-      expect(result[0].content).toEqual('Reply 2');
-      expect(result[1].id).toEqual('reply-1');
-      expect(result[1].content).toEqual('Reply 1');
+      expect(result[0].id).toEqual('reply-456');
+      expect(result[0].username).toEqual('dicodingother');
+      expect(result[0].date).toEqual('2023-07-03T05:19:09.775Z');
+      expect(result[0].content).toEqual('Content 1');
+      expect(result[0].isDeleted).toEqual(true);
+      expect(result[1].id).toEqual('reply-123');
+      expect(result[1].username).toEqual('dicodingother');
+      expect(result[1].date).toEqual('2023-07-04T05:19:09.775Z');
+      expect(result[1].content).toEqual('Content 1');
+      expect(result[1].isDeleted).toEqual(false);
     });
   });
 });

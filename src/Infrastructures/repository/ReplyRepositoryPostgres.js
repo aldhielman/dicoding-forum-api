@@ -43,11 +43,16 @@ class ReplyRepositoryPostgres extends ReplyRepository {
   async verifyOwner(payload) {
     const { userId, replyId } = payload;
 
-    const result = await this.verifyReplyId(replyId);
+    const query = {
+      text: 'SELECT user_id AS "userId" FROM replies WHERE id = $1',
+      values: [replyId],
+    };
 
-    if (result.user_id !== userId) {
+    const result = await this._pool.query(query);
+
+    if (result.rows[0].userId !== userId) {
       throw new AuthorizationError(
-        'anda tidak dapat menghapus reply yang tidak anda buat',
+        'anda tidak dapat menghapus balasan yang tidak anda buat',
       );
     }
   }
@@ -63,8 +68,6 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     if (!result.rowCount) {
       throw new NotFoundError('reply tidak ditemukan');
     }
-
-    return result.rows[0];
   }
 
   async getRepliesByCommentId(commentId) {

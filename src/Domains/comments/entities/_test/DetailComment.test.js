@@ -66,5 +66,35 @@ describe('a DetailComment entities', () => {
     expect(comment.date).toEqual(payload.date);
     expect(comment.content).toEqual(payload.content);
     expect(comment.replies).toEqual(payload.replies);
+    expect(comment.isDeleted).toEqual(payload.isDeleted);
+  });
+
+  it('should create DetailComment object correctly when no isDeleted property', () => {
+    // Arrange
+    const payload = {
+      id: 'comment-123',
+      username: 'dicoding',
+      date: new Date().toISOString(),
+      content: 'Comment 1',
+      replies: [
+        new DetailReply({
+          id: 'reply-123',
+          content: 'Reply 1',
+          username: 'dicoding',
+          date: new Date().toISOString(),
+        }),
+      ],
+    };
+
+    // Action
+    const comment = new DetailComment(payload);
+
+    // Assert
+    expect(comment.id).toEqual(payload.id);
+    expect(comment.username).toEqual(payload.username);
+    expect(comment.date).toEqual(payload.date);
+    expect(comment.content).toEqual(payload.content);
+    expect(comment.replies).toEqual(payload.replies);
+    expect(comment.isDeleted).toEqual(payload.isDeleted);
   });
 });

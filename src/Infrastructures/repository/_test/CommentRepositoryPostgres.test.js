@@ -232,7 +232,7 @@ describe('CommentRepositoryPostgres', () => {
         userId: 'user-test',
         threadId: 'thread-test',
         content: 'comment lebih baru',
-        createdAt: new Date().toISOString(),
+        createdAt: '2023-07-04T05:19:09.775Z',
       });
 
       // Comment 1
@@ -241,7 +241,7 @@ describe('CommentRepositoryPostgres', () => {
         userId: 'user-test',
         threadId: 'thread-test',
         content: 'comment lebih lama',
-        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+        createdAt: '2023-07-03T05:19:09.775Z',
       });
 
       const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
@@ -258,8 +258,14 @@ describe('CommentRepositoryPostgres', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toEqual('comment-2');
       expect(result[0].content).toEqual('comment lebih lama');
+      expect(result[0].username).toEqual('dicodingother');
+      expect(result[0].date).toEqual('2023-07-03T05:19:09.775Z');
+      expect(result[0].isDeleted).toEqual(false);
       expect(result[1].id).toEqual('comment-1');
       expect(result[1].content).toEqual('comment lebih baru');
+      expect(result[1].username).toEqual('dicodingother');
+      expect(result[1].date).toEqual('2023-07-04T05:19:09.775Z');
+      expect(result[1].isDeleted).toEqual(false);
     });
 
     it('should return correct content when comment is deleted', async () => {
@@ -278,7 +284,7 @@ describe('CommentRepositoryPostgres', () => {
         userId: 'user-test',
         threadId: 'thread-test',
         content: 'comment lebih baru',
-        createdAt: new Date().toISOString(),
+        createdAt: '2023-07-04T05:19:09.775Z',
       });
 
       // Comment 2
@@ -288,26 +294,8 @@ describe('CommentRepositoryPostgres', () => {
         threadId: 'thread-test',
         content: 'comment lebih lama',
         isDeleted: true,
-        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+        createdAt: '2023-07-03T05:19:09.775Z',
       });
-
-      // await RepliesTableTestHelper.addReply({
-      //   id: 'reply-123',
-      //   content: 'Reply 1',
-      //   userId: 'user-test',
-      //   commentId: 'comment-2',
-      //   isDeleted: false,
-      //   createdAt: new Date().toISOString(),
-      // });
-
-      // await RepliesTableTestHelper.addReply({
-      //   id: 'reply-456',
-      //   content: 'Reply 1',
-      //   userId: 'user-test',
-      //   commentId: 'comment-2',
-      //   isDeleted: true,
-      //   createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
-      // });
 
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
@@ -318,15 +306,14 @@ describe('CommentRepositoryPostgres', () => {
       expect(result).toHaveLength(2);
       expect(result[0].id).toEqual('comment-2');
       expect(result[0].content).toEqual('comment lebih lama');
+      expect(result[0].username).toEqual('dicodingother');
+      expect(result[0].date).toEqual('2023-07-03T05:19:09.775Z');
       expect(result[0].isDeleted).toEqual(true);
-      // expect(result[0].replies).toHaveLength(2);
-      // expect(result[0].replies[0].id).toEqual('reply-456');
-      // expect(result[0].replies[1].id).toEqual('reply-123');
-
       expect(result[1].id).toEqual('comment-1');
       expect(result[1].content).toEqual('comment lebih baru');
+      expect(result[1].username).toEqual('dicodingother');
+      expect(result[1].date).toEqual('2023-07-04T05:19:09.775Z');
       expect(result[1].isDeleted).toEqual(false);
-      // expect(result[1].replies).toEqual([]);
     });
   });
 

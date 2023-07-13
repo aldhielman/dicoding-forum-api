@@ -327,7 +327,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
       expect(response.statusCode).toEqual(403);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toEqual(
-        'anda tidak dapat menghapus reply yang tidak anda buat',
+        'anda tidak dapat menghapus balasan yang tidak anda buat',
       );
     });
 
