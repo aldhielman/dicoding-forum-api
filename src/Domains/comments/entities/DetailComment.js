@@ -4,7 +4,7 @@ class DetailComment {
   constructor(payload) {
     this._verifyPayload(payload);
     const {
-      id, username, date, content, replies,
+      id, username, date, content, replies, isDeleted,
     } = payload;
 
     this.id = id;
@@ -12,6 +12,9 @@ class DetailComment {
     this.date = date;
     this.username = username;
     this.replies = replies;
+    if (isDeleted !== undefined) {
+      this.isDeleted = isDeleted;
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -21,7 +24,7 @@ class DetailComment {
     }
 
     const {
-      id, content, date, username, replies,
+      id, content, date, username, replies, isDeleted,
     } = payload;
     if (!content || !id || !date || !username || !replies) {
       throw new Error('DETAIL_COMMENT.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY');
@@ -33,6 +36,7 @@ class DetailComment {
       || typeof username !== 'string'
       || typeof date !== 'string'
       || !Array.isArray(replies)
+      || (isDeleted !== undefined && typeof isDeleted !== 'boolean')
       || !replies.every((reply) => reply instanceof DetailReply)
     ) {
       throw new Error(

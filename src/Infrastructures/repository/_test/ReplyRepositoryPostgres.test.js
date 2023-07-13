@@ -319,7 +319,7 @@ describe('ReplyRepositoryPostgres', () => {
 
       expect(result).toHaveLength(2);
       expect(result[0].id).toEqual('reply-2');
-      expect(result[0].content).toEqual('**balasan telah dihapus**');
+      expect(result[0].content).toEqual('Reply 2');
       expect(result[1].id).toEqual('reply-1');
       expect(result[1].content).toEqual('Reply 1');
     });

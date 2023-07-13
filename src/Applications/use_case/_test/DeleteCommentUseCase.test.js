@@ -63,7 +63,11 @@ describe('DeleteCommentUseCase', () => {
       .fn()
       .mockImplementation(() => Promise.resolve());
 
-    mockThreadRepository.viewThread = jest
+    mockThreadRepository.verifyThreadId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
+
+    mockCommentRepository.verifyCommentId = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
 
@@ -80,8 +84,12 @@ describe('DeleteCommentUseCase', () => {
     // Action
     await getCommentUseCase.execute(useCasePayload);
 
-    expect(mockThreadRepository.viewThread).toBeCalledWith(
+    expect(mockThreadRepository.verifyThreadId).toBeCalledWith(
       useCasePayload.threadId,
+    );
+
+    expect(mockCommentRepository.verifyCommentId).toBeCalledWith(
+      useCasePayload.commentId,
     );
 
     expect(mockCommentRepository.verifyOwner).toBeCalledWith(useCasePayload);

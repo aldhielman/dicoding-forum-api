@@ -6,7 +6,6 @@ const Thread = require('../../../Domains/threads/entities/Thread');
 const pool = require('../../database/postgres/pool');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
-const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 
 describe('ThreadRepositoryPostgres', () => {
   afterEach(async () => {
@@ -107,12 +106,7 @@ describe('ThreadRepositoryPostgres', () => {
         createdAt: date,
       });
 
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
-        pool,
-        {},
-        commentRepositoryPostgres,
-      );
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool);
 
       const thread = await threadRepositoryPostgres.viewThread('thread-123');
       // Assert

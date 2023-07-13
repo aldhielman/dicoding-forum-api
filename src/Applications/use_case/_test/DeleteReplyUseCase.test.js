@@ -71,6 +71,10 @@ describe('DeleteReplyUseCase', () => {
       .fn()
       .mockImplementation(() => Promise.resolve());
 
+    mockReplyRepository.verifyReplyId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve());
+
     mockCommentRepository.verifyCommentId = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
@@ -94,6 +98,9 @@ describe('DeleteReplyUseCase', () => {
     );
     expect(mockCommentRepository.verifyCommentId).toBeCalledWith(
       useCasePayload.commentId,
+    );
+    expect(mockReplyRepository.verifyReplyId).toBeCalledWith(
+      useCasePayload.replyId,
     );
     expect(mockReplyRepository.verifyOwner).toBeCalledWith(useCasePayload);
     expect(mockReplyRepository.deleteReply).toBeCalledWith(

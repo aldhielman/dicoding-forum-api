@@ -30,6 +30,7 @@ describe('a DetailComment entities', () => {
       username: {},
       date: [],
       replies: {},
+      isDeleted: 'true',
     };
 
     // Action and Assert
@@ -53,6 +54,7 @@ describe('a DetailComment entities', () => {
           date: new Date().toISOString(),
         }),
       ],
+      isDeleted: false,
     };
 
     // Action

@@ -27,12 +27,19 @@ describe('AddUserUseCase', () => {
     const mockPasswordHash = new PasswordHash();
 
     /** mocking needed function */
-    mockUserRepository.verifyAvailableUsername = jest.fn()
+    mockUserRepository.verifyAvailableUsername = jest
+      .fn()
       .mockImplementation(() => Promise.resolve());
-    mockPasswordHash.hash = jest.fn()
+    mockPasswordHash.hash = jest
+      .fn()
       .mockImplementation(() => Promise.resolve('encrypted_password'));
-    mockUserRepository.addUser = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockRegisteredUser));
+    mockUserRepository.addUser = jest.fn().mockImplementation(() => Promise.resolve(
+      new RegisteredUser({
+        id: 'user-123',
+        username: useCasePayload.username,
+        fullname: useCasePayload.fullname,
+      }),
+    ));
 
     /** creating use case instance */
     const getUserUseCase = new AddUserUseCase({
@@ -44,18 +51,18 @@ describe('AddUserUseCase', () => {
     const registeredUser = await getUserUseCase.execute(useCasePayload);
 
     // Assert
-    expect(registeredUser).toStrictEqual(new RegisteredUser({
-      id: 'user-123',
-      username: useCasePayload.username,
-      fullname: useCasePayload.fullname,
-    }));
+    expect(registeredUser).toStrictEqual(mockRegisteredUser);
 
-    expect(mockUserRepository.verifyAvailableUsername).toBeCalledWith(useCasePayload.username);
+    expect(mockUserRepository.verifyAvailableUsername).toBeCalledWith(
+      useCasePayload.username,
+    );
     expect(mockPasswordHash.hash).toBeCalledWith(useCasePayload.password);
-    expect(mockUserRepository.addUser).toBeCalledWith(new RegisterUser({
-      username: useCasePayload.username,
-      password: 'encrypted_password',
-      fullname: useCasePayload.fullname,
-    }));
+    expect(mockUserRepository.addUser).toBeCalledWith(
+      new RegisterUser({
+        username: useCasePayload.username,
+        password: 'encrypted_password',
+        fullname: useCasePayload.fullname,
+      }),
+    );
   });
 });

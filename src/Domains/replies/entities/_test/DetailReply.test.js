@@ -28,6 +28,7 @@ describe('a DetailReply entities', () => {
       content: 'comment 1',
       username: {},
       date: [],
+      isDeleted: 'false',
     };
 
     // Action and Assert
@@ -43,15 +44,17 @@ describe('a DetailReply entities', () => {
       username: 'dicoding',
       date: new Date().toISOString(),
       content: 'Comment 1',
+      isDeleted: false,
     };
 
     // Action
-    const comment = new DetailReply(payload);
+    const reply = new DetailReply(payload);
 
     // Assert
-    expect(comment.id).toEqual(payload.id);
-    expect(comment.username).toEqual(payload.username);
-    expect(comment.date).toEqual(payload.date);
-    expect(comment.content).toEqual(payload.content);
+    expect(reply.id).toEqual(payload.id);
+    expect(reply.username).toEqual(payload.username);
+    expect(reply.date).toEqual(payload.date);
+    expect(reply.content).toEqual(payload.content);
+    expect(reply.isDeleted).toEqual(payload.isDeleted);
   });
 });

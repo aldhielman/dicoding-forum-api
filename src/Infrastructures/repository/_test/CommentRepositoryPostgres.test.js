@@ -102,46 +102,6 @@ describe('CommentRepositoryPostgres', () => {
   });
 
   describe('verifyOwner function', () => {
-    it('should triger NotFound Exception when given commentId not found', async () => {
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
-
-      const verifyOwnerPayload = {
-        commentId: 'notFoundId',
-        userId: 'user-test',
-      };
-
-      await expect(
-        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload),
-      ).rejects.toThrowError(NotFoundError);
-    });
-
-    it('should not triger NotFound Exception when given commentId found', async () => {
-      await UsersTableTestHelper.addUser({
-        id: 'user-test',
-        username: 'dicodingother',
-      });
-      await ThreadsTableTestHelper.addThread({
-        id: 'thread-test',
-        userId: 'user-test',
-      });
-      await CommentTableTestHelper.addComment({
-        id: 'comment-123',
-        userId: 'user-test',
-        threadId: 'thread-test',
-      });
-
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
-
-      const verifyOwnerPayload = {
-        commentId: 'comment-123',
-        userId: 'user-test',
-      };
-
-      await expect(
-        commentRepositoryPostgres.verifyOwner(verifyOwnerPayload),
-      ).resolves.not.toThrowError(NotFoundError);
-    });
-
     it('should triger AuthorizationError Exception when user id is not same comment owner', async () => {
       await UsersTableTestHelper.addUser({
         id: 'user-test',
@@ -319,7 +279,6 @@ describe('CommentRepositoryPostgres', () => {
         threadId: 'thread-test',
         content: 'comment lebih baru',
         createdAt: new Date().toISOString(),
-        replies: [],
       });
 
       // Comment 2
@@ -332,30 +291,25 @@ describe('CommentRepositoryPostgres', () => {
         createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
       });
 
-      await RepliesTableTestHelper.addReply({
-        id: 'reply-123',
-        content: 'Reply 1',
-        userId: 'user-test',
-        commentId: 'comment-2',
-        isDeleted: false,
-        createdAt: new Date().toISOString(),
-      });
+      // await RepliesTableTestHelper.addReply({
+      //   id: 'reply-123',
+      //   content: 'Reply 1',
+      //   userId: 'user-test',
+      //   commentId: 'comment-2',
+      //   isDeleted: false,
+      //   createdAt: new Date().toISOString(),
+      // });
 
-      await RepliesTableTestHelper.addReply({
-        id: 'reply-456',
-        content: 'Reply 1',
-        userId: 'user-test',
-        commentId: 'comment-2',
-        isDeleted: true,
-        createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
-      });
+      // await RepliesTableTestHelper.addReply({
+      //   id: 'reply-456',
+      //   content: 'Reply 1',
+      //   userId: 'user-test',
+      //   commentId: 'comment-2',
+      //   isDeleted: true,
+      //   createdAt: new Date(new Date().getTime() - 3600000).toISOString(),
+      // });
 
-      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool);
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(
-        pool,
-        {},
-        replyRepositoryPostgres,
-      );
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
 
       const result = await commentRepositoryPostgres.getCommentsByThreadId(
         'thread-test',
@@ -363,14 +317,16 @@ describe('CommentRepositoryPostgres', () => {
 
       expect(result).toHaveLength(2);
       expect(result[0].id).toEqual('comment-2');
-      expect(result[0].content).toEqual('**komentar telah dihapus**');
-      expect(result[0].replies).toHaveLength(2);
-      expect(result[0].replies[0].id).toEqual('reply-456');
-      expect(result[0].replies[1].id).toEqual('reply-123');
+      expect(result[0].content).toEqual('comment lebih lama');
+      expect(result[0].isDeleted).toEqual(true);
+      // expect(result[0].replies).toHaveLength(2);
+      // expect(result[0].replies[0].id).toEqual('reply-456');
+      // expect(result[0].replies[1].id).toEqual('reply-123');
 
       expect(result[1].id).toEqual('comment-1');
       expect(result[1].content).toEqual('comment lebih baru');
-      expect(result[1].replies).toEqual([]);
+      expect(result[1].isDeleted).toEqual(false);
+      // expect(result[1].replies).toEqual([]);
     });
   });
 

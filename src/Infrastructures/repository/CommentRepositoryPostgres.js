@@ -5,11 +5,10 @@ const Comment = require('../../Domains/comments/entities/Comment');
 const DetailComment = require('../../Domains/comments/entities/DetailComment');
 
 class CommentRepositoryPostgres extends CommentRepository {
-  constructor(pool, idGenerator, replyRepository) {
+  constructor(pool, idGenerator) {
     super();
     this._pool = pool;
     this._idGenerator = idGenerator;
-    this._replyRepository = replyRepository;
   }
 
   async addComment(payload) {
@@ -44,9 +43,14 @@ class CommentRepositoryPostgres extends CommentRepository {
   async verifyOwner(payload) {
     const { userId, commentId } = payload;
 
-    const result = await this.verifyCommentId(commentId);
+    const query = {
+      text: 'SELECT user_id AS "userId" FROM comments WHERE id = $1',
+      values: [commentId],
+    };
 
-    if (result.user_id !== userId) {
+    const result = await this._pool.query(query);
+
+    if (result.rows[0].userId !== userId) {
       throw new AuthorizationError(
         'anda tidak dapat menghapus komentar yang tidak anda buat',
       );
@@ -64,35 +68,22 @@ class CommentRepositoryPostgres extends CommentRepository {
     if (!result.rowCount) {
       throw new NotFoundError('comment tidak ditemukan');
     }
-
-    return result.rows[0];
   }
 
   async getCommentsByThreadId(threadId) {
     const query = {
-      text: 'SELECT c.id, u.username, c.created_at as "createdAt", c.content, c.is_deleted as "isDeleted" FROM comments c LEFT JOIN users u ON c.user_id = u.id WHERE thread_id = $1 ORDER BY c.created_at ASC',
+      text: 'SELECT c.id, u.username, c.created_at as "date", c.content, c.is_deleted as "isDeleted" FROM comments c LEFT JOIN users u ON c.user_id = u.id WHERE thread_id = $1 ORDER BY c.created_at ASC',
       values: [threadId],
     };
 
     const result = await this._pool.query(query);
-    let comments = [];
+    const comments = [];
 
     if (result.rowCount) {
-      const promises = result.rows.map(async (item) => {
-        const { createdAt, isDeleted, content } = item;
-        const replies = await this._replyRepository.getRepliesByCommentId(
-          item.id,
-        );
-        const comment = new DetailComment({
-          ...item,
-          date: createdAt,
-          content: isDeleted ? '**komentar telah dihapus**' : content,
-          replies,
-        });
-        return comment;
+      result.rows.forEach((data) => {
+        const comment = new DetailComment({ ...data, replies: [] });
+        comments.push(comment);
       });
-
-      comments = await Promise.all(promises);
     }
 
     return comments;
