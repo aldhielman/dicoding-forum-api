@@ -255,17 +255,27 @@ describe('CommentRepositoryPostgres', () => {
         'thread-test',
       );
 
+      const result0 = new DetailComment({
+        id: 'comment-2',
+        content: 'comment lebih lama',
+        username: 'dicodingother',
+        date: '2023-07-03T05:19:09.775Z',
+        isDeleted: false,
+        replies: [],
+      });
+
+      const result1 = new DetailComment({
+        id: 'comment-1',
+        content: 'comment lebih baru',
+        username: 'dicodingother',
+        date: '2023-07-04T05:19:09.775Z',
+        isDeleted: false,
+        replies: [],
+      });
+
       expect(result).toHaveLength(2);
-      expect(result[0].id).toEqual('comment-2');
-      expect(result[0].content).toEqual('comment lebih lama');
-      expect(result[0].username).toEqual('dicodingother');
-      expect(result[0].date).toEqual('2023-07-03T05:19:09.775Z');
-      expect(result[0].isDeleted).toEqual(false);
-      expect(result[1].id).toEqual('comment-1');
-      expect(result[1].content).toEqual('comment lebih baru');
-      expect(result[1].username).toEqual('dicodingother');
-      expect(result[1].date).toEqual('2023-07-04T05:19:09.775Z');
-      expect(result[1].isDeleted).toEqual(false);
+      expect(result[0]).toStrictEqual(result0);
+      expect(result[1]).toStrictEqual(result1);
     });
 
     it('should return correct content when comment is deleted', async () => {
@@ -303,17 +313,27 @@ describe('CommentRepositoryPostgres', () => {
         'thread-test',
       );
 
+      const result0 = new DetailComment({
+        id: 'comment-2',
+        content: 'comment lebih lama',
+        username: 'dicodingother',
+        date: '2023-07-03T05:19:09.775Z',
+        isDeleted: true,
+        replies: [],
+      });
+
+      const result1 = new DetailComment({
+        id: 'comment-1',
+        content: 'comment lebih baru',
+        username: 'dicodingother',
+        date: '2023-07-04T05:19:09.775Z',
+        isDeleted: false,
+        replies: [],
+      });
+
       expect(result).toHaveLength(2);
-      expect(result[0].id).toEqual('comment-2');
-      expect(result[0].content).toEqual('comment lebih lama');
-      expect(result[0].username).toEqual('dicodingother');
-      expect(result[0].date).toEqual('2023-07-03T05:19:09.775Z');
-      expect(result[0].isDeleted).toEqual(true);
-      expect(result[1].id).toEqual('comment-1');
-      expect(result[1].content).toEqual('comment lebih baru');
-      expect(result[1].username).toEqual('dicodingother');
-      expect(result[1].date).toEqual('2023-07-04T05:19:09.775Z');
-      expect(result[1].isDeleted).toEqual(false);
+      expect(result[0]).toStrictEqual(result0);
+      expect(result[1]).toStrictEqual(result1);
     });
   });
 

@@ -27,7 +27,7 @@ describe('AddUserUseCase', () => {
 
     /** mocking needed function */
 
-    mockThreadRepository.addThread = jest.fn().mockImplementation(() => Promise.resolve(
+    mockThreadRepository.addThread = jest.fn(() => Promise.resolve(
       new Thread({
         id: 'thread-123',
         title: useCasePayload.title,
