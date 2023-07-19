@@ -11,6 +11,7 @@
   },
   "rules": {
     "no-underscore-dangle": "off",
-    "max-len": ["error", { "code": 250 }]
+    "max-len": ["error", { "code": 500 }],
+    "linebreak-style": "off"
   }
 }

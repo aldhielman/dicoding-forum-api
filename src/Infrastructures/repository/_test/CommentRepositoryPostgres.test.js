@@ -9,6 +9,7 @@ const AuthorizationError = require('../../../Commons/exceptions/AuthorizationErr
 const DetailComment = require('../../../Domains/comments/entities/DetailComment');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
+const LikesTableTestHelper = require('../../../../tests/LikesTableTestHelper');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
@@ -261,6 +262,7 @@ describe('CommentRepositoryPostgres', () => {
         username: 'dicodingother',
         date: '2023-07-03T05:19:09.775Z',
         isDeleted: false,
+        likeCount: 0,
         replies: [],
       });
 
@@ -270,6 +272,7 @@ describe('CommentRepositoryPostgres', () => {
         username: 'dicodingother',
         date: '2023-07-04T05:19:09.775Z',
         isDeleted: false,
+        likeCount: 0,
         replies: [],
       });
 
@@ -318,6 +321,7 @@ describe('CommentRepositoryPostgres', () => {
         content: 'comment lebih lama',
         username: 'dicodingother',
         date: '2023-07-03T05:19:09.775Z',
+        likeCount: 0,
         isDeleted: true,
         replies: [],
       });
@@ -328,12 +332,57 @@ describe('CommentRepositoryPostgres', () => {
         username: 'dicodingother',
         date: '2023-07-04T05:19:09.775Z',
         isDeleted: false,
+        likeCount: 0,
         replies: [],
       });
 
       expect(result).toHaveLength(2);
       expect(result[0]).toStrictEqual(result0);
       expect(result[1]).toStrictEqual(result1);
+    });
+
+    it('should return correct likeCount', async () => {
+      await UsersTableTestHelper.addUser({
+        id: 'user-test',
+        username: 'dicodingother',
+      });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-test',
+        userId: 'user-test',
+      });
+
+      // Comment 1
+      await CommentTableTestHelper.addComment({
+        id: 'comment-1',
+        userId: 'user-test',
+        threadId: 'thread-test',
+        content: 'comment lebih baru',
+        createdAt: '2023-07-04T05:19:09.775Z',
+      });
+
+      await LikesTableTestHelper.addLike({
+        commentId: 'comment-1',
+        userId: 'user-test',
+      });
+
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool);
+
+      const result = await commentRepositoryPostgres.getCommentsByThreadId(
+        'thread-test',
+      );
+
+      const result0 = new DetailComment({
+        id: 'comment-1',
+        content: 'comment lebih baru',
+        username: 'dicodingother',
+        date: '2023-07-04T05:19:09.775Z',
+        likeCount: 1,
+        isDeleted: false,
+        replies: [],
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toStrictEqual(result0);
     });
   });
 

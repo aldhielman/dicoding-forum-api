@@ -6,6 +6,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
+const LikesTableTestHelper = require('../../../../tests/LikesTableTestHelper');
 
 describe('/threads endpoint', () => {
   let user;
@@ -243,12 +244,13 @@ describe('/threads endpoint', () => {
         expect(responseJson.data.thread.username).toEqual('user1');
         expect(responseJson.data.thread.comments).toHaveLength(2);
         expect(Object.keys(responseJson.data.thread.comments[0])).toHaveLength(
-          5,
+          6,
         );
         expect(responseJson.data.thread.comments[0].id).toEqual('comment-456');
         expect(responseJson.data.thread.comments[0].content).toEqual(
           'Content 2',
         );
+        expect(responseJson.data.thread.comments[0].likeCount).toEqual(0);
         expect(responseJson.data.thread.comments[0].date).toEqual(
           '2023-07-04T08:19:09.775Z',
         );
@@ -256,12 +258,13 @@ describe('/threads endpoint', () => {
         expect(responseJson.data.thread.comments[0].replies).toEqual([]);
 
         expect(Object.keys(responseJson.data.thread.comments[1])).toHaveLength(
-          5,
+          6,
         );
         expect(responseJson.data.thread.comments[1].id).toEqual('comment-123');
         expect(responseJson.data.thread.comments[1].content).toEqual(
           'Content 1',
         );
+        expect(responseJson.data.thread.comments[1].likeCount).toEqual(0);
         expect(responseJson.data.thread.comments[1].date).toEqual(
           '2023-07-04T09:19:09.775Z',
         );
@@ -287,6 +290,11 @@ describe('/threads endpoint', () => {
           content: 'Content 1',
           userId: 'user-1',
           createdAt: '2023-07-04T09:19:09.775Z',
+        });
+
+        await LikesTableTestHelper.addLike({
+          commentId: 'comment-123',
+          userId: 'user-123',
         });
 
         await RepliesTableTestHelper.addReply({
@@ -326,12 +334,13 @@ describe('/threads endpoint', () => {
         expect(responseJson.data.thread.username).toEqual('user1');
         expect(responseJson.data.thread.comments).toHaveLength(1);
         expect(Object.keys(responseJson.data.thread.comments[0])).toHaveLength(
-          5,
+          6,
         );
         expect(responseJson.data.thread.comments[0].id).toEqual('comment-123');
         expect(responseJson.data.thread.comments[0].content).toEqual(
           'Content 1',
         );
+        expect(responseJson.data.thread.comments[0].likeCount).toEqual(1);
         expect(responseJson.data.thread.comments[0].date).toEqual(
           '2023-07-04T09:19:09.775Z',
         );

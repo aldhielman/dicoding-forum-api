@@ -6,7 +6,7 @@ const DetailReply = require('../../../Domains/replies/entities/DetailReply');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 
-describe('ViewUserUseCase', () => {
+describe('ViewThreadUseCase', () => {
   describe('when no replies on thread comment', () => {
     it('should orchestrating the view thread action correctly without calling replyRepository.getRepliesByCommentId method', async () => {
       // Arrange
@@ -26,6 +26,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             replies: [],
           }),
         ],
@@ -60,6 +61,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             isDeleted: false,
             replies: [],
           }),
@@ -117,6 +119,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: '**komentar telah dihapus**',
+            likeCount: 0,
             replies: [],
           }),
         ],
@@ -151,6 +154,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             isDeleted: true,
             replies: [],
           }),
@@ -210,6 +214,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             replies: [
               new DetailReply({
                 id: 'reply-123',
@@ -251,6 +256,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             replies: [],
           }),
         ]));
@@ -315,6 +321,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             replies: [
               new DetailReply({
                 id: 'reply-123',
@@ -356,6 +363,7 @@ describe('ViewUserUseCase', () => {
             username: 'dicodingother',
             date: '2021-08-08T07:22:33.555Z',
             content: 'Comment 1',
+            likeCount: 0,
             isDeleted: false,
             replies: [],
           }),

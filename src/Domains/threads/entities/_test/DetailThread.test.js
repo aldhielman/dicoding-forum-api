@@ -56,6 +56,7 @@ describe('a DetailThread entities', () => {
           username: 'dicoding',
           date: new Date().toISOString(),
           replies: [],
+          likeCount: 0,
           isDeleted: false,
         }),
       ],
