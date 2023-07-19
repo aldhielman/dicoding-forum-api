@@ -13,7 +13,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
 
   async addReply(payload) {
     const { content, userId, commentId } = payload;
-    const createdAt = new Date().toDateString();
+    const createdAt = new Date().toISOString();
     const id = `reply-${this._idGenerator()}`;
 
     const query = {

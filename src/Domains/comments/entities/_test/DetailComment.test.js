@@ -31,6 +31,7 @@ describe('a DetailComment entities', () => {
       date: [],
       replies: {},
       isDeleted: 'true',
+      likeCount: '1',
     };
 
     // Action and Assert
@@ -46,6 +47,7 @@ describe('a DetailComment entities', () => {
       username: 'dicoding',
       date: new Date().toISOString(),
       content: 'Comment 1',
+      likeCount: 0,
       replies: [
         new DetailReply({
           id: 'reply-123',
@@ -65,6 +67,7 @@ describe('a DetailComment entities', () => {
     expect(comment.username).toEqual(payload.username);
     expect(comment.date).toEqual(payload.date);
     expect(comment.content).toEqual(payload.content);
+    expect(comment.likeCount).toEqual(payload.likeCount);
     expect(comment.replies).toEqual(payload.replies);
     expect(comment.isDeleted).toEqual(payload.isDeleted);
   });
@@ -76,6 +79,7 @@ describe('a DetailComment entities', () => {
       username: 'dicoding',
       date: new Date().toISOString(),
       content: 'Comment 1',
+      likeCount: 0,
       replies: [
         new DetailReply({
           id: 'reply-123',
@@ -95,6 +99,7 @@ describe('a DetailComment entities', () => {
     expect(comment.date).toEqual(payload.date);
     expect(comment.content).toEqual(payload.content);
     expect(comment.replies).toEqual(payload.replies);
+    expect(comment.likeCount).toEqual(payload.likeCount);
     expect(comment.isDeleted).toEqual(payload.isDeleted);
   });
 });

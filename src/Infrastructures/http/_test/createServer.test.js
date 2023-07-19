@@ -30,6 +30,11 @@ describe('HTTP server', () => {
       url: `/threads/${threadId}/comments/${commentId}`,
     });
 
+    const putLikeResponse = await server.inject({
+      method: 'PUT',
+      url: `/threads/${threadId}/comments/${commentId}/likes`,
+    });
+
     const postReplyResponse = await server.inject({
       method: 'POST',
       url: `/threads/${threadId}/comments/${commentId}/replies`,
@@ -38,6 +43,7 @@ describe('HTTP server', () => {
     expect(postCommentResponse.statusCode).toEqual(401);
     expect(deleteCommentResponse.statusCode).toEqual(401);
     expect(postReplyResponse.statusCode).toEqual(401);
+    expect(putLikeResponse.statusCode).toEqual(401);
   });
 
   it('should response 401 when request protected route with invalid token', async () => {
@@ -61,6 +67,14 @@ describe('HTTP server', () => {
       },
     });
 
+    const putLikeResponse = await server.inject({
+      method: 'PUT',
+      url: `/threads/${threadId}/comments/${commentId}/likes`,
+      headers: {
+        authorizations: 'invalidtoken',
+      },
+    });
+
     const postReplyResponse = await server.inject({
       method: 'POST',
       url: `/threads/${threadId}/comments/${commentId}/replies`,
@@ -72,6 +86,7 @@ describe('HTTP server', () => {
     expect(postCommentResponse.statusCode).toEqual(401);
     expect(deleteCommentResponse.statusCode).toEqual(401);
     expect(postReplyResponse.statusCode).toEqual(401);
+    expect(putLikeResponse.statusCode).toEqual(401);
   });
 
   it('should handle server error correctly', async () => {

@@ -13,7 +13,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async addComment(payload) {
     const { content, userId, threadId } = payload;
-    const createdAt = new Date().toDateString();
+    const createdAt = new Date().toISOString();
     const id = `comment-${this._idGenerator()}`;
 
     const query = {
@@ -72,7 +72,7 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async getCommentsByThreadId(threadId) {
     const query = {
-      text: 'SELECT c.id, u.username, c.created_at as "date", c.content, c.is_deleted as "isDeleted" FROM comments c LEFT JOIN users u ON c.user_id = u.id WHERE thread_id = $1 ORDER BY c.created_at ASC',
+      text: 'SELECT c.id, u.username, c.created_at as "date", c.content, c.is_deleted as "isDeleted", CAST(COUNT(l.comment_id) AS INTEGER) AS "likeCount" FROM comments c  LEFT JOIN likes l ON c.id = l.comment_id LEFT JOIN users u ON c.user_id = u.id WHERE thread_id = $1 GROUP BY c.id, u.username ORDER BY c.created_at ASC',
       values: [threadId],
     };
 
@@ -81,7 +81,10 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     if (result.rowCount) {
       result.rows.forEach((data) => {
-        const comment = new DetailComment({ ...data, replies: [] });
+        const comment = new DetailComment({
+          ...data,
+          replies: [],
+        });
         comments.push(comment);
       });
     }
